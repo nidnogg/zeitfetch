@@ -1,7 +1,13 @@
 use sysinfo::{NetworkExt, NetworksExt, ProcessExt, System, SystemExt};
+use std::process::Command;
+use std::process::Stdio;
 fn main() {
     generate_info();
     
+}
+
+fn print_type_of<T>(_: &T) {
+    println!("{}", std::any::type_name::<T>())
 }
 
 fn generate_info() {
@@ -19,11 +25,63 @@ fn generate_info() {
     //     println!("{:?}", disk);
     // }
 
-    println!("=> system:");
     // RAM and swap information:
     let total_memory = sys.total_memory().to_string();
     let used_memory = sys.used_memory().to_string();
     // let total_memory_slice: &str = &total_memory;
+    // ripped straight out of neofetch - move this into separate file (sys_lists.rs) probably 
+    // with helper function to return it 
+    // case $osx_version in 
+    //             10.4*)  codename="Mac OS X Tiger" ;;
+    //             10.5*)  codename="Mac OS X Leopard" ;;
+    //             10.6*)  codename="Mac OS X Snow Leopard" ;;
+    //             10.7*)  codename="Mac OS X Lion" ;;
+    //             10.8*)  codename="OS X Mountain Lion" ;;
+    //             10.9*)  codename="OS X Mavericks" ;;
+    //             10.10*) codename="OS X Yosemite" ;;
+    //             10.11*) codename="OS X El Capitan" ;;
+    //             10.12*) codename="macOS Sierra" ;;
+    //             10.13*) codename="macOS High Sierra" ;;
+    //             10.14*) codename="macOS Mojave" ;;
+    //             10.15*) codename="macOS Catalina" ;;
+    //             10.16*) codename="macOS Big Sur" ;;
+    //             11.*)  codename="macOS Big Sur" ;;
+    //             12.*)  codename="macOS Monterey" ;;
+    //             *)      codename=macOS ;;
+    //         esac
+
+
+    // get a way to find use .contains() from 
+    match sys.name() {
+        Some(value) => {
+            let sys_name = value; 
+            if sys_name.contains("Darwin") {
+                let os_num = Command::new("sw_vers")
+                    .stdout(Stdio::piped()).spawn()
+                    .expect("Failed to fetch OS data (Mac)");
+                    
+                // const os_version = os_num.stdout;
+                // println!(os_num);
+                // Command::new("grep")
+                //     .arg("")
+            }
+            
+        None => pass;
+        }
+
+    }
+    // if sys.name().to_string().contains("Darwin") {
+    //     let os_num = Command::new("sw_vers")
+    //         .stdout(Stdio::piped()).spawn()
+    //         .expect("Failed to fetch OS data (Mac)");
+
+    //     const os_version = os_num.stdout;
+    //     println!(os_num);
+    //     // Command::new("grep")
+    //     //     .arg("")
+        
+    // }
+
     println!("total memory: {} KB", &total_memory[..4]);
     println!("used memory : {} KB", &used_memory[..4]);
     // println!("total swap  : {} KB", sys.total_swap());
