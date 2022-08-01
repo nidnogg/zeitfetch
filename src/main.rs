@@ -1,4 +1,4 @@
-use sysinfo::{NetworkExt, NetworksExt, ProcessExt, System, SystemExt};
+use sysinfo::{System, SystemExt};
 use std::process::Command;
 use std::process::Stdio;
 fn main() {
@@ -10,6 +10,10 @@ fn print_type_of<T>(_: &T) {
     println!("{}", std::any::type_name::<T>())
 }
 
+// fn output_sysname(System sys) {
+
+
+// }
 fn generate_info() {
     // "new_all" used to ensure that all list of
     // components, network interfaces, disks and users are already
@@ -31,6 +35,7 @@ fn generate_info() {
     // let total_memory_slice: &str = &total_memory;
     // ripped straight out of neofetch - move this into separate file (sys_lists.rs) probably 
     // with helper function to return it 
+    // use match pennies example to return this.{}
     // case $osx_version in 
     //             10.4*)  codename="Mac OS X Tiger" ;;
     //             10.5*)  codename="Mac OS X Leopard" ;;
@@ -57,18 +62,22 @@ fn generate_info() {
             let sys_name = value; 
             if sys_name.contains("Darwin") {
                 let os_num = Command::new("sw_vers")
-                    .stdout(Stdio::piped()).spawn()
+                    .output()
                     .expect("Failed to fetch OS data (Mac)");
-                    
-                // const os_version = os_num.stdout;
-                // println!(os_num);
-                // Command::new("grep")
-                //     .arg("")
-            }
-            
-        None => pass;
-        }
+                    let sw_vers = String::from_utf8(os_num.stdout).unwrap();               
+                    let sys_name_grep = Command::new("grep")
+                        .arg(sw_vers)
+                        .arg("ProductVersion")
+                        .output()
+                        .expect("Failed to trim sw_vers output for Mac friendly name");
 
+                    let sys_friendly_name = String::from_utf8(sys_name_grep.stdout).unwrap();
+                    println!("{}", sys_friendly_name);
+           
+            }
+        },   
+        None => println!("N/A"),
+        
     }
     // if sys.name().to_string().contains("Darwin") {
     //     let os_num = Command::new("sw_vers")
@@ -82,20 +91,20 @@ fn generate_info() {
         
     // }
 
-    println!("total memory: {} KB", &total_memory[..4]);
-    println!("used memory : {} KB", &used_memory[..4]);
     // println!("total swap  : {} KB", sys.total_swap());
     // println!("used swap   : {} KB", sys.used_swap());
-
+    
     // display system information:
     println!("System name:             {:?}", sys.name());
     println!("System kernel version:   {:?}", sys.kernel_version());
     println!("System OS version:       {:?}", sys.os_version());
     println!("System host name:        {:?}", sys.host_name());
-
+    
     // Number of CPUs:
     println!("NB CPUs: {}", sys.cpus().len());
-
+    
+    // Memory info
+    println!("Memory: {}/{} MiB", &used_memory[..4], &total_memory[..4]);
     // // Display processes ID, name and disk usage:
     // for (pid, process) in sys.processes() {
     //     println!("[{}] {} {:?}", pid, process.name(), process.disk_usage());
