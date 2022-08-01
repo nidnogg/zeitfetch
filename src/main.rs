@@ -57,42 +57,15 @@ fn generate_info() {
                 }
                 let res = cmd_grep.wait_with_output().unwrap().stdout;
                 let sys_friendly_num = &String::from_utf8(res).unwrap()[16..];
-                print!("{}", sys_friendly_num);
-                // let sys_friendly_name = String::from_utf8(cmd_grep.stdout).unwrap();
-                // let os_num = Command::new("sw_vers")
-                //     .output()
-                //     .expect("Failed to fetch OS data (Mac)");
-
-                // let sw_vers = String::from_utf8(os_num.stdout).unwrap();               
-                // let sys_name_grep = Command::new("grep")
-                //     .arg(&sw_vers)
-                //     .arg("ProductVersion")
-                //     .output()
-                //     .expect("Failed to trim sw_vers output for Mac friendly name");
-
-                // let sys_friendly_name = String::from_utf8(sys_name_grep.stdout).unwrap();
-                // println!("{} well", sys_friendly_name);
+                let sys_friendly_num_no_whitespace = &sys_friendly_num[..sys_friendly_num.len() - 1];
+                
+                println!("{}", get_mac_friendly_name(sys_friendly_num_no_whitespace));
             }
         },   
-        None => println!("N/A"),
-        
+        None => println!("N/A"),    
     }
-    // if sys.name().to_string().contains("Darwin") {
-    //     let os_num = Command::new("sw_vers")
-    //         .stdout(Stdio::piped()).spawn()
-    //         .expect("Failed to fetch OS data (Mac)");
 
-    //     const os_version = os_num.stdout;
-    //     println!(os_num);
-    //     // Command::new("grep")
-    //     //     .arg("")
-        
-    // }
-
-    // println!("total swap  : {} KB", sys.total_swap());
-    // println!("used swap   : {} KB", sys.used_swap());
-    
-    // display system information:
+    // Display system information:
     println!("System name:             {:?}", sys.name());
     println!("System kernel version:   {:?}", sys.kernel_version());
     println!("System OS version:       {:?}", sys.os_version());
@@ -103,14 +76,11 @@ fn generate_info() {
     
     // Memory info
     println!("Memory: {}/{} MiB", &used_memory[..4], &total_memory[..4]);
-    // // Display processes ID, name and disk usage:
-    // for (pid, process) in sys.processes() {
-    //     println!("[{}] {} {:?}", pid, process.name(), process.disk_usage());
-    // }
+
 }
 
 
-fn get_mac_friendly_name(ver_num: str) -> String {
+fn get_mac_friendly_name(ver_num: &str) -> String {
     // ripped straight out of neofetch - move this into separate file (sys_lists.rs) probably 
     // with helper function to return it 
     // use match pennies example to return this.{}
@@ -132,7 +102,10 @@ fn get_mac_friendly_name(ver_num: str) -> String {
     //             12.*)  codename="macOS Monterey" ;;
     //             *)      codename=macOS ;;
     //         esac
-    match ver_num {
-        "10.11.6" => return String::from("OS X El Capitan"),
+
+    match &*ver_num {
+        "10.11.6" => String::from("OS X El Capitan"),
+        &_ => String::from(""),
     }
+
 }
