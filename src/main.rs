@@ -7,31 +7,59 @@ fn main() {
     
 }
 
-// fn output_sysname(System sys) {
-
-// }
-
-
 fn generate_info() {
     // "new_all" used to ensure that all list of
     // components, network interfaces, disks and users are already
     // filled
     let mut sys = System::new_all();
 
-    // update all information of our `System` struct.
+    // Update all information of `System` struct.
     sys.refresh_all();
 
-    // // display all disks' information:
-    // println!("=> disks:");
-    // for disk in sys.disks() {
-    //     println!("{:?}", disk);
-    // }
+    // Display system information:
 
-    // RAM and swap information:
-    let total_memory = sys.total_memory().to_string();
-    let used_memory = sys.used_memory().to_string();
- 
-    // get a way to find use .contains() from 
+    sys = get_sys_name(sys);
+    sys = get_host_name(sys);
+
+    // TO-DO properly convert seconds to minutes, hours, days;
+    println!("Uptime: {:?}", sys.uptime());
+    sys = get_kernel(sys);
+    println!("System OS version:       {:?}", sys.os_version());
+    
+    // Number of CPUs:
+    println!("NB CPUs: {}", sys.cpus().len());
+    
+    // Memory info
+    get_mem_info(sys);
+
+    // A way to extract value from an Option() - if it's None, output is blank
+    // if let Some(value) = sys.name() {
+    //     println!("System name {}", value);
+    // }
+    
+}
+
+fn get_kernel(sys: System) -> System {
+    if let Some(value) = sys.kernel_version() {
+        println!("Kernel: {}", value);
+        return sys;
+    } else {
+        println!("Kernel: N/A");
+        return sys; 
+    }
+}
+
+fn get_host_name(sys: System) -> System {
+    if let Some(value) = sys.host_name() {
+        println!("Host: {}", value);
+        return sys;
+    } else {
+        println!("N/A");
+        return sys;
+    }
+}
+
+fn get_sys_name(sys: System) -> System {
     match sys.name() {
         Some(value) => {
             let sys_name = value; 
@@ -59,26 +87,28 @@ fn generate_info() {
                 let sys_friendly_num = &String::from_utf8(res).unwrap()[16..];
                 let sys_friendly_num_no_whitespace = &sys_friendly_num[..sys_friendly_num.len() - 1];
                 
-                println!("{}", get_mac_friendly_name(sys_friendly_num_no_whitespace));
+                println!("OS: {}", get_mac_friendly_name(sys_friendly_num_no_whitespace));
+                return sys;
+            } else {
+                println!("OS: {}", sys_name);
+                return sys;
             }
         },   
-        None => println!("N/A"),    
+        None => {
+            println!("N/A");
+            return sys;
+        },    
     }
-
-    // Display system information:
-    println!("System name:             {:?}", sys.name());
-    println!("System kernel version:   {:?}", sys.kernel_version());
-    println!("System OS version:       {:?}", sys.os_version());
-    println!("System host name:        {:?}", sys.host_name());
-    
-    // Number of CPUs:
-    println!("NB CPUs: {}", sys.cpus().len());
-    
-    // Memory info
-    println!("Memory: {}/{} MiB", &used_memory[..4], &total_memory[..4]);
-
 }
 
+// Warning - if sys is needed after get_mem_info, return it like in get_sys_name().
+fn get_mem_info(sys: System) {
+    // RAM information (non swap):
+    let total_memory = sys.total_memory().to_string();
+    let used_memory = sys.used_memory().to_string();
+
+    println!("Memory: {}/{} MiB", &used_memory[..4], &total_memory[..4]);
+}
 
 fn get_mac_friendly_name(ver_num: &str) -> String {
     // ripped straight out of neofetch - move this into separate file (sys_lists.rs) probably 
@@ -103,6 +133,7 @@ fn get_mac_friendly_name(ver_num: &str) -> String {
     //             *)      codename=macOS ;;
     //         esac
 
+    // TO-DO Figure out how to match starting substring
     match &*ver_num {
         "10.11.6" => String::from("OS X El Capitan"),
         &_ => String::from(""),
