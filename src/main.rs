@@ -86,12 +86,17 @@ fn get_sys_name(sys: System) -> System {
                 let res = cmd_grep.wait_with_output().unwrap().stdout;
                 let sys_friendly_num = &String::from_utf8(res).unwrap()[16..];
                 let sys_friendly_num_no_whitespace = &sys_friendly_num[..sys_friendly_num.len() - 1];
-                
+          
                 println!("OS: {}", get_mac_friendly_name(sys_friendly_num_no_whitespace));
                 return sys;
             } else {
-                println!("OS: {}", sys_name);
-                return sys;
+                if let Some(os_ver) = sys.os_version() {
+                    println!("OS: {} {}", sys_name, os_ver);
+                    return sys;
+                } else {
+                    println!("OS: {}", sys_name);
+                    return sys;
+                }
             }
         },   
         None => {
