@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 sysinfo = "0.24.7"
+home = "0.5.3"

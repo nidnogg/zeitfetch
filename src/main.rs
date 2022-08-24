@@ -1,4 +1,5 @@
 use sysinfo::{System, SystemExt};
+use home;
 use std::process::Command;
 use std::process::Stdio;
 use std::io::{Read, Write};
@@ -18,16 +19,17 @@ fn generate_info() {
 
     // Display system information:
 
+    sys = get_user_prompt(sys);
     sys = get_sys_name(sys);
     sys = get_host_name(sys);
 
     // TO-DO properly convert seconds to minutes, hours, days;
-    println!("Uptime: {:?}", sys.uptime());
+    println!("\x1b[93;1m{}\x1b[0m: {:?}", "Uptime", sys.uptime());
     sys = get_kernel(sys);
-    println!("System OS version:       {:?}", sys.os_version());
+    println!("\x1b[93;1m{}\x1b[0m: {:?}", "System OS version:", sys.os_version());
     
     // Number of CPUs:
-    println!("NB CPUs: {}", sys.cpus().len());
+    println!("\x1b[93;1m{}\x1b[0m: {}", "NB CPUs", sys.cpus().len());
     
     // Memory info
     get_mem_info(sys);
@@ -39,19 +41,47 @@ fn generate_info() {
     
 }
 
+fn get_user_prompt(sys: System) -> System {
+    if let Some(os) = sys.name() {
+        if let Some(home_dir) = home::home_dir() {
+            let path = String::from(home_dir.to_string_lossy());
+            let mut count = 0;
+            for letter in path.chars().rev() {
+                if (letter == '\\' && os.contains("Windows")) || (letter == '/') {
+                    break;
+                }
+                count += 1;
+            }
+    
+            let start_user_index = path.len() - count;
+            let username = &path[start_user_index..];
+    
+            if let Some(host_name) = sys.host_name() {
+                let user_prompt = format!("\x1b[93;1m{}\x1b[0m@\x1b[93;1m{}\x1b[0m", username, host_name);
+                // Extra 1 for @ character
+                let total_width = host_name.len() + username.len() + 1; 
+                let linebreak = std::iter::repeat("-").take(total_width).collect::<String>();
+                println!("{}", user_prompt);
+                println!("{}", linebreak);
+            }
+        }
+    }
+
+    return sys;
+}
 fn get_kernel(sys: System) -> System {
     if let Some(value) = sys.kernel_version() {
-        println!("Kernel: {}", value);
+        println!("\x1b[93;1m{}\x1b[0m: {}", "Kernel", value);
         return sys;
     } else {
-        println!("Kernel: N/A");
+        println!("\x1b[93;1m{}\x1b[0m: N/A", "Kernel");
         return sys; 
     }
 }
 
 fn get_host_name(sys: System) -> System {
     if let Some(value) = sys.host_name() {
-        println!("Host: {}", value);
+        println!("\x1b[93;1m{}\x1b[0m: {}", "Host", value);
         return sys;
     } else {
         println!("N/A");
@@ -87,14 +117,14 @@ fn get_sys_name(sys: System) -> System {
                 let sys_friendly_num = &String::from_utf8(res).unwrap()[16..];
                 let sys_friendly_num_no_whitespace = &sys_friendly_num[..sys_friendly_num.len() - 1];
           
-                println!("OS: {}", get_mac_friendly_name(sys_friendly_num_no_whitespace));
+                println!("\x1b[93;1m{}\x1b[0m: {}", "OS", get_mac_friendly_name(sys_friendly_num_no_whitespace));
                 return sys;
             } else {
                 if let Some(os_ver) = sys.os_version() {
-                    println!("OS: {} {}", sys_name, os_ver);
+                    println!("\x1b[93;1m{}\x1b[0m: {} {}", "OS", sys_name, os_ver);
                     return sys;
                 } else {
-                    println!("OS: {}", sys_name);
+                    println!("\x1b[93;1m{}\x1b[0m: {}", "OS", sys_name);
                     return sys;
                 }
             }
@@ -112,7 +142,7 @@ fn get_mem_info(sys: System) {
     let total_memory = sys.total_memory().to_string();
     let used_memory = sys.used_memory().to_string();
 
-    println!("Memory: {}/{} MiB", &used_memory[..4], &total_memory[..4]);
+    println!("\x1b[93;1m{}\x1b[0m: {}/{} MiB", "Memory", &used_memory[..4], &total_memory[..4]);
 }
 
 fn get_mac_friendly_name(ver_num: &str) -> String {
