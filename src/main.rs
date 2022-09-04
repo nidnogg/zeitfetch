@@ -22,11 +22,9 @@ fn generate_info() {
     sys = get_user_prompt(sys);
     sys = get_sys_name(sys);
     sys = get_host_name(sys);
-
-    // TO-DO properly convert seconds to minutes, hours, days;
-    println!("\x1b[93;1m{}\x1b[0m: {:?}", "Uptime", sys.uptime());
+    sys = get_uptime(sys);
     sys = get_kernel(sys);
-    println!("\x1b[93;1m{}\x1b[0m: {:?}", "System OS version:", sys.os_version());
+    sys = get_os_ver(sys);
     
     // Number of CPUs:
     println!("\x1b[93;1m{}\x1b[0m: {}", "NB CPUs", sys.cpus().len());
@@ -66,26 +64,25 @@ fn get_user_prompt(sys: System) -> System {
             }
         }
     }
-
-    return sys;
+    sys
 }
 fn get_kernel(sys: System) -> System {
     if let Some(value) = sys.kernel_version() {
         println!("\x1b[93;1m{}\x1b[0m: {}", "Kernel", value);
-        return sys;
+        sys
     } else {
         println!("\x1b[93;1m{}\x1b[0m: N/A", "Kernel");
-        return sys; 
+        sys 
     }
 }
 
 fn get_host_name(sys: System) -> System {
     if let Some(value) = sys.host_name() {
         println!("\x1b[93;1m{}\x1b[0m: {}", "Host", value);
-        return sys;
+        sys
     } else {
         println!("N/A");
-        return sys;
+        sys
     }
 }
 
@@ -118,22 +115,40 @@ fn get_sys_name(sys: System) -> System {
                 let sys_friendly_num_no_whitespace = &sys_friendly_num[..sys_friendly_num.len() - 1];
           
                 println!("\x1b[93;1m{}\x1b[0m: {}", "OS", get_mac_friendly_name(sys_friendly_num_no_whitespace));
-                return sys;
+                sys
             } else {
                 if let Some(os_ver) = sys.os_version() {
                     println!("\x1b[93;1m{}\x1b[0m: {} {}", "OS", sys_name, os_ver);
-                    return sys;
+                    sys
                 } else {
                     println!("\x1b[93;1m{}\x1b[0m: {}", "OS", sys_name);
-                    return sys;
+                    sys
                 }
             }
         },   
         None => {
             println!("N/A");
-            return sys;
+            sys
         },    
     }
+}
+
+fn get_uptime(sys: System) -> System {
+    let uptime: f64 = sys.uptime() as f64;
+    let days: f64 = uptime / 86400.0;
+    // let hours = (days - (sys.uptime() / 3600)) * 24;
+    let hours: f64 = (days - ((uptime / 3600.0) / 24.0)) * 24.0;
+    let minutes: f64 = uptime / 60.0;
+
+
+    println!("\x1b[93;1m{}\x1b[0m: {:.0} days, {} hours and {} minutes", "Uptime", days.floor(), hours, minutes);
+    sys
+}
+fn get_os_ver(sys: System) -> System {
+    if let Some(os_ver) = sys.os_version() {
+        println!("\x1b[93;1m{}\x1b[0m: {}", "System OS version", os_ver);
+    }
+    sys
 }
 
 // Warning - if sys is needed after get_mem_info, return it like in get_sys_name().
@@ -144,6 +159,7 @@ fn get_mem_info(sys: System) {
 
     println!("\x1b[93;1m{}\x1b[0m: {}/{} MiB", "Memory", &used_memory[..4], &total_memory[..4]);
 }
+
 
 fn get_mac_friendly_name(ver_num: &str) -> String {
     // ripped straight out of neofetch - move this into separate file (sys_lists.rs) probably 
