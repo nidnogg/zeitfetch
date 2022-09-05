@@ -66,6 +66,7 @@ fn get_user_prompt(sys: System) -> System {
     }
     sys
 }
+
 fn get_kernel(sys: System) -> System {
     if let Some(value) = sys.kernel_version() {
         println!("\x1b[93;1m{}\x1b[0m: {}", "Kernel", value);
@@ -134,16 +135,49 @@ fn get_sys_name(sys: System) -> System {
 }
 
 fn get_uptime(sys: System) -> System {
-    let uptime: f64 = sys.uptime() as f64;
-    let days: f64 = uptime / 86400.0;
-    // let hours = (days - (sys.uptime() / 3600)) * 24;
-    let hours: f64 = (days - ((uptime / 3600.0) / 24.0)) * 24.0;
-    let minutes: f64 = uptime / 60.0;
-
-
-    println!("\x1b[93;1m{}\x1b[0m: {:.0} days, {} hours and {} minutes", "Uptime", days.floor(), hours, minutes);
+    let mut uptime: f64 = sys.uptime() as f64;
+    let days: f64 = uptime / (24.0 * 3600.0);
+    if days > 1.0 {
+        uptime = uptime % (24.0 * 3600.0);
+        let hours: f64 = uptime / 3600.0;
+        if hours > 1.0 {
+            uptime = uptime % 3600.0;
+            let minutes: f64 = uptime / 60.0;
+            if minutes >= 1.0 {
+                println!("\x1b[93;1m{}\x1b[0m: {} day(s), {} hour(s) and {} minute(s)", "Uptime", days.floor(), hours.floor(), minutes.floor());
+            } else {
+                println!("\x1b[93;1m{}\x1b[0m: {} day(s) {} hour(s)", "Uptime", days.floor(), hours.floor());
+            }
+        } else {
+            let minutes: f64 = uptime / 60.0;
+            if minutes >= 1.0 {
+                println!("\x1b[93;1m{}\x1b[0m: {} day(s) and {} minute(s)", "Uptime", days.floor(), minutes.floor());
+            } else {
+                println!("\x1b[93;1m{}\x1b[0m: {} day(s)", "Uptime", days.floor());
+            }
+        }
+    } else {
+        let hours: f64 = uptime / 3600.0;
+        if hours > 1.0 {
+            uptime = uptime % 3600.0;
+            let minutes: f64 = uptime / 60.0;
+            if minutes >= 1.0 {
+                println!("\x1b[93;1m{}\x1b[0m: {} hour(s) and {} minute(s)", "Uptime", hours.floor(), minutes.floor());
+            } else {
+                println!("\x1b[93;1m{}\x1b[0m: {} hour(s)", "Uptime", hours.floor());
+            }
+        } else {
+            let minutes: f64 = uptime / 60.0;
+            if minutes >= 1.0 {
+                println!("\x1b[93;1m{}\x1b[0m: {} minute(s)", "Uptime", minutes.floor());
+            } else {
+                println!("\x1b[93;1m{}\x1b[0m: {} second(s)", "Uptime", uptime.floor());
+            }
+        }
+    }
     sys
 }
+
 fn get_os_ver(sys: System) -> System {
     if let Some(os_ver) = sys.os_version() {
         println!("\x1b[93;1m{}\x1b[0m: {}", "System OS version", os_ver);
@@ -159,7 +193,6 @@ fn get_mem_info(sys: System) {
 
     println!("\x1b[93;1m{}\x1b[0m: {}/{} MiB", "Memory", &used_memory[..4], &total_memory[..4]);
 }
-
 
 fn get_mac_friendly_name(ver_num: &str) -> String {
     // ripped straight out of neofetch - move this into separate file (sys_lists.rs) probably 
@@ -189,5 +222,4 @@ fn get_mac_friendly_name(ver_num: &str) -> String {
         "10.11.6" => String::from("OS X El Capitan"),
         &_ => String::from(""),
     }
-
 }
