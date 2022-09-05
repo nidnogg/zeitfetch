@@ -32,6 +32,9 @@ fn generate_info() {
     // Memory info
     get_mem_info(sys);
 
+    // Color Palette
+    get_palette();
+
     // A way to extract value from an Option() - if it's None, output is blank
     // if let Some(value) = sys.name() {
     //     println!("System name {}", value);
@@ -192,6 +195,19 @@ fn get_mem_info(sys: System) {
     let total_memory = sys.total_memory() as f64 * KB_TO_MIB;
     let used_memory = sys.used_memory() as f64 * KB_TO_MIB;
     println!("\x1b[93;1m{}\x1b[0m: {}/{} MiB", "Memory", used_memory.floor(), total_memory.floor());
+}
+
+fn get_palette() {
+
+    
+    println!("\n\
+        \x1b[30m███\x1b[0m\x1b[31m███\x1b[0m\x1b[32m███\x1b[0m\x1b[33m███\x1b[0m\
+        \x1b[34m███\x1b[0m\x1b[35m███\x1b[0m\x1b[36m███\x1b[0m\x1b[90;1m███\x1b[0m\n\
+        \x1b[90;1m███\x1b[0m\x1b[91;1m███\x1b[0m\x1b[92;1m███\x1b[0m\x1b[93;1m███\x1b[0m\
+        \x1b[94;1m███\x1b[0m\x1b[95;1m███\x1b[0m\x1b[96;1m███\x1b[0m\x1b[100;1m███\x1b[0m\
+        "
+    );
+
 }
 
 fn get_mac_friendly_name(ver_num: &str) -> String {
