@@ -3,46 +3,72 @@ use home;
 use std::process::Command;
 use std::process::Stdio;
 use std::io::{Read, Write};
+
+use prettytable::Table;
+use prettytable::row;
+use prettytable::format;
 fn main() {
     generate_info();
     
 }
 
+fn get_logo() -> String {
+
+    let logo = String::from("
+lllllllllllllll   lllllllllllllll
+lllllllllllllll   lllllllllllllll
+lllllllllllllll   lllllllllllllll  
+lllllllllllllll   lllllllllllllll
+lllllllllllllll   lllllllllllllll 
+lllllllllllllll   lllllllllllllll
+lllllllllllllll   lllllllllllllll
+                                
+lllllllllllllll   lllllllllllllll 
+lllllllllllllll   lllllllllllllll
+lllllllllllllll   lllllllllllllll
+lllllllllllllll   lllllllllllllll
+lllllllllllllll   lllllllllllllll
+lllllllllllllll   lllllllllllllll
+lllllllllllllll   lllllllllllllll
+    ");
+
+    logo
+}
 fn generate_info() {
     // "new_all" used to ensure that all list of
     // components, network interfaces, disks and users are already
     // filled
     let mut sys = System::new_all();
-
+    
     // Update all information of `System` struct.
     sys.refresh_all();
-
-    // Display system information:
-
-    sys = get_user_prompt(sys);
-    sys = get_sys_name(sys);
-    sys = get_host_name(sys);
-    sys = get_uptime(sys);
-    sys = get_kernel(sys);
-    sys = get_os_ver(sys);
     
-    // Number of CPUs:
-    println!("\x1b[93;1m{}\x1b[0m: {}", "NB CPUs", sys.cpus().len());
+    // Fetch system information:
     
-    // Memory info
-    get_mem_info(sys);
-
-    // Color Palette
-    get_palette();
-
-    // A way to extract value from an Option() - if it's None, output is blank
-    // if let Some(value) = sys.name() {
-    //     println!("System name {}", value);
-    // }
+    let user_prompt = get_user_prompt(&sys);
+    let sys_name = get_sys_name(&sys);
+    let host_name = get_host_name(&sys);
+    let uptime = get_uptime(&sys);
+    let kernel = get_kernel(&sys);
+    let os_ver = get_os_ver(&sys);
+    let cpu_num = format!("\x1b[93;1m{}\x1b[0m: {}", "NB CPUs", sys.cpus().len());
+    // sys = get_sys_components(sys);
+    let mem_info = get_mem_info(&sys);  
+    let palette = get_palette();
+    let logo = get_logo();
     
+    // Structure and output system information
+    let sys_info_col = format!(
+        "\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n", 
+        user_prompt, sys_name, host_name, uptime, kernel, os_ver, cpu_num, mem_info, palette);
+    let mut table = Table::new();
+    table.set_format(*format::consts::FORMAT_CLEAN);
+    table.add_row(row![&logo, &sys_info_col]);
+    table.printstd();
+
 }
 
-fn get_user_prompt(sys: System) -> System {
+fn get_user_prompt(sys: &System) -> String {
     if let Some(os) = sys.name() {
         if let Some(home_dir) = home::home_dir() {
             let path = String::from(home_dir.to_string_lossy());
@@ -53,7 +79,7 @@ fn get_user_prompt(sys: System) -> System {
                 }
                 count += 1;
             }
-    
+            
             let start_user_index = path.len() - count;
             let username = &path[start_user_index..];
     
@@ -62,35 +88,40 @@ fn get_user_prompt(sys: System) -> System {
                 // Extra 1 for @ character
                 let total_width = host_name.len() + username.len() + 1; 
                 let linebreak = std::iter::repeat("-").take(total_width).collect::<String>();
-                println!("{}", user_prompt);
-                println!("{}", linebreak);
+                let final_user_prompt = format!("{}\n{}", user_prompt,linebreak);
+                final_user_prompt 
+            } else {
+                String::from("N/A")
             }
+        } else {
+            String::from("N/A")
         }
+    } else {
+        String::from("N/A")
     }
-    sys
 }
 
-fn get_kernel(sys: System) -> System {
+fn get_kernel(sys: &System) -> String {
     if let Some(value) = sys.kernel_version() {
-        println!("\x1b[93;1m{}\x1b[0m: {}", "Kernel", value);
-        sys
+        let kernel = format!("\x1b[93;1m{}\x1b[0m: {}", "Kernel", value);
+        kernel 
     } else {
-        println!("\x1b[93;1m{}\x1b[0m: N/A", "Kernel");
-        sys 
+        let kernel = format!("\x1b[93;1m{}\x1b[0m: N/A", "Kernel");
+        kernel
     }
 }
 
-fn get_host_name(sys: System) -> System {
+fn get_host_name(sys: &System) -> String {
     if let Some(value) = sys.host_name() {
-        println!("\x1b[93;1m{}\x1b[0m: {}", "Host", value);
-        sys
+        let host_name = format!("\x1b[93;1m{}\x1b[0m: {}", "Host", value);
+        host_name
     } else {
-        println!("N/A");
-        sys
+        let host_name = String::from("N/A");
+        host_name
     }
 }
 
-fn get_sys_name(sys: System) -> System {
+fn get_sys_name(sys: &System) -> String {
     match sys.name() {
         Some(value) => {
             let sys_name = value; 
@@ -118,26 +149,25 @@ fn get_sys_name(sys: System) -> System {
                 let sys_friendly_num = &String::from_utf8(res).unwrap()[16..];
                 let sys_friendly_num_no_whitespace = &sys_friendly_num[..sys_friendly_num.len() - 1];
           
-                println!("\x1b[93;1m{}\x1b[0m: {}", "OS", get_mac_friendly_name(sys_friendly_num_no_whitespace));
-                sys
+                let final_sys_name = format!("\x1b[93;1m{}\x1b[0m: {}", "OS", get_mac_friendly_name(sys_friendly_num_no_whitespace));
+                final_sys_name
             } else {
                 if let Some(os_ver) = sys.os_version() {
-                    println!("\x1b[93;1m{}\x1b[0m: {} {}", "OS", sys_name, os_ver);
-                    sys
+                    let final_sys_name = format!("\x1b[93;1m{}\x1b[0m: {} {}", "OS", sys_name, os_ver);
+                    final_sys_name
                 } else {
-                    println!("\x1b[93;1m{}\x1b[0m: {}", "OS", sys_name);
-                    sys
+                    let final_sys_name = format!("\x1b[93;1m{}\x1b[0m: {}", "OS", sys_name);
+                    final_sys_name
                 }
             }
         },   
         None => {
-            println!("N/A");
-            sys
+            String::from("N/A")
         },    
     }
 }
 
-fn get_uptime(sys: System) -> System {
+fn get_uptime(sys: &System) -> String {
     let mut uptime: f64 = sys.uptime() as f64;
     let days: f64 = uptime / (24.0 * 3600.0);
     if days > 1.0 {
@@ -147,16 +177,20 @@ fn get_uptime(sys: System) -> System {
             uptime = uptime % 3600.0;
             let minutes: f64 = uptime / 60.0;
             if minutes >= 1.0 {
-                println!("\x1b[93;1m{}\x1b[0m: {} day(s), {} hour(s) and {} minute(s)", "Uptime", days.floor(), hours.floor(), minutes.floor());
+                let final_uptime = format!("\x1b[93;1m{}\x1b[0m: {} day(s), {} hour(s) and {} minute(s)", "Uptime", days.floor(), hours.floor(), minutes.floor());
+                final_uptime
             } else {
-                println!("\x1b[93;1m{}\x1b[0m: {} day(s) {} hour(s)", "Uptime", days.floor(), hours.floor());
+                let final_uptime = format!("\x1b[93;1m{}\x1b[0m: {} day(s) {} hour(s)", "Uptime", days.floor(), hours.floor());
+                final_uptime
             }
         } else {
             let minutes: f64 = uptime / 60.0;
             if minutes >= 1.0 {
-                println!("\x1b[93;1m{}\x1b[0m: {} day(s) and {} minute(s)", "Uptime", days.floor(), minutes.floor());
+                let final_uptime = format!("\x1b[93;1m{}\x1b[0m: {} day(s) and {} minute(s)", "Uptime", days.floor(), minutes.floor());
+                final_uptime
             } else {
-                println!("\x1b[93;1m{}\x1b[0m: {} day(s)", "Uptime", days.floor());
+                let final_uptime = format!("\x1b[93;1m{}\x1b[0m: {} day(s)", "Uptime", days.floor());
+                final_uptime
             }
         }
     } else {
@@ -165,42 +199,55 @@ fn get_uptime(sys: System) -> System {
             uptime = uptime % 3600.0;
             let minutes: f64 = uptime / 60.0;
             if minutes >= 1.0 {
-                println!("\x1b[93;1m{}\x1b[0m: {} hour(s) and {} minute(s)", "Uptime", hours.floor(), minutes.floor());
+                let final_uptime = format!("\x1b[93;1m{}\x1b[0m: {} hour(s) and {} minute(s)", "Uptime", hours.floor(), minutes.floor());
+                final_uptime
             } else {
-                println!("\x1b[93;1m{}\x1b[0m: {} hour(s)", "Uptime", hours.floor());
+                let final_uptime = format!("\x1b[93;1m{}\x1b[0m: {} hour(s)", "Uptime", hours.floor());
+                final_uptime
             }
         } else {
             let minutes: f64 = uptime / 60.0;
             if minutes >= 1.0 {
-                println!("\x1b[93;1m{}\x1b[0m: {} minute(s)", "Uptime", minutes.floor());
+                let final_uptime = format!("\x1b[93;1m{}\x1b[0m: {} minute(s)", "Uptime", minutes.floor());
+                final_uptime
             } else {
-                println!("\x1b[93;1m{}\x1b[0m: {} second(s)", "Uptime", uptime.floor());
+                let final_uptime = format!("\x1b[93;1m{}\x1b[0m: {} second(s)", "Uptime", uptime.floor());
+                final_uptime
             }
         }
     }
-    sys
 }
 
-fn get_os_ver(sys: System) -> System {
+
+fn get_os_ver(sys: &System) -> String {
     if let Some(os_ver) = sys.os_version() {
-        println!("\x1b[93;1m{}\x1b[0m: {}", "System OS version", os_ver);
+        let final_os_ver = format!("\x1b[93;1m{}\x1b[0m: {}", "System OS version", os_ver);
+        final_os_ver
+    } else {
+        String::from("N/A")
     }
-    sys
 }
+
+// fn get_sys_components(sys: &System) -> String {
+//     for component in sys.components() {
+//         println!("{:?}", component);
+//     }
+//     // println!("\x1b[93;1m{}\x1b[0m: {}/{} MiB", "Memory", used_memory.floor(), total_memory.floor());
+// }
 
 // Warning - if sys is needed after get_mem_info, return it like in get_sys_name().
-fn get_mem_info(sys: System) {
+fn get_mem_info(sys: &System) -> String {
     // RAM information (non swap):
     const KB_TO_MIB: f64 = 0.00095367431640625;
     let total_memory = sys.total_memory() as f64 * KB_TO_MIB;
     let used_memory = sys.used_memory() as f64 * KB_TO_MIB;
-    println!("\x1b[93;1m{}\x1b[0m: {}/{} MiB", "Memory", used_memory.floor(), total_memory.floor());
+    let mem_info = format!("\x1b[93;1m{}\x1b[0m: {}/{} MiB", "Memory", used_memory.floor(), total_memory.floor());
+    
+    mem_info
 }
 
-fn get_palette() {
-
-    
-    println!("\n\
+fn get_palette() -> String {
+    let palette = format!("\n\
         \x1b[30m███\x1b[0m\x1b[31m███\x1b[0m\x1b[32m███\x1b[0m\x1b[33m███\x1b[0m\
         \x1b[34m███\x1b[0m\x1b[35m███\x1b[0m\x1b[36m███\x1b[0m\x1b[90;1m███\x1b[0m\n\
         \x1b[90;1m███\x1b[0m\x1b[91;1m███\x1b[0m\x1b[92;1m███\x1b[0m\x1b[93;1m███\x1b[0m\
@@ -208,6 +255,7 @@ fn get_palette() {
         "
     );
 
+    palette
 }
 
 fn get_mac_friendly_name(ver_num: &str) -> String {
