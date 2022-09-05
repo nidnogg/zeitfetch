@@ -7,32 +7,26 @@ use std::io::{Read, Write};
 use prettytable::Table;
 use prettytable::row;
 use prettytable::format;
+
+mod logo;
 fn main() {
     generate_info();
     
 }
 
-fn get_logo() -> String {
+fn get_logo(sys: &System) -> String {
 
-    let logo = String::from("
-lllllllllllllll   lllllllllllllll
-lllllllllllllll   lllllllllllllll
-lllllllllllllll   lllllllllllllll  
-lllllllllllllll   lllllllllllllll
-lllllllllllllll   lllllllllllllll 
-lllllllllllllll   lllllllllllllll
-lllllllllllllll   lllllllllllllll
-                                
-lllllllllllllll   lllllllllllllll 
-lllllllllllllll   lllllllllllllll
-lllllllllllllll   lllllllllllllll
-lllllllllllllll   lllllllllllllll
-lllllllllllllll   lllllllllllllll
-lllllllllllllll   lllllllllllllll
-lllllllllllllll   lllllllllllllll
-    ");
-
-    logo
+    if let Some(sys_name) = sys.name() {
+        if sys_name.contains("22000") && sys_name.contains("Windows") {
+            logo::get_logo_by_distro("win11")
+        } else if sys_name.contains("Windows") {
+            logo::get_logo_by_distro("win")
+        } else {
+            logo::get_logo_by_distro("win")
+        }
+    } else {
+        String::from("")
+    }
 }
 fn generate_info() {
     // "new_all" used to ensure that all list of
@@ -55,7 +49,7 @@ fn generate_info() {
     // sys = get_sys_components(sys);
     let mem_info = get_mem_info(&sys);  
     let palette = get_palette();
-    let logo = get_logo();
+    let logo = get_logo(&sys);
     
     // Structure and output system information
     let sys_info_col = format!(
@@ -125,6 +119,9 @@ fn get_sys_name(sys: &System) -> String {
     match sys.name() {
         Some(value) => {
             let sys_name = value; 
+            
+    
+            // Mac OS
             if sys_name.contains("Darwin") {
                 let mut cmd_sw_vers = Command::new("sw_vers")
                     .stdout(Stdio::piped())
@@ -150,6 +147,12 @@ fn get_sys_name(sys: &System) -> String {
                 let sys_friendly_num_no_whitespace = &sys_friendly_num[..sys_friendly_num.len() - 1];
           
                 let final_sys_name = format!("\x1b[93;1m{}\x1b[0m: {}", "OS", get_mac_friendly_name(sys_friendly_num_no_whitespace));
+                final_sys_name
+
+            // Windows 11
+            } else if sys_name.contains("Windows") {
+                // let final_sys_name = format!("\x1b[93;1m{}\x1b[0m: {} 11", "OS", sys_name);
+                let final_sys_name = format!("\x1b[93;1m{}\x1b[0m!", "FIX ME: Windows matches but 22000 doesn't");
                 final_sys_name
             } else {
                 if let Some(os_ver) = sys.os_version() {
