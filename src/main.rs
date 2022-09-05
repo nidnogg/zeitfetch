@@ -188,10 +188,10 @@ fn get_os_ver(sys: System) -> System {
 // Warning - if sys is needed after get_mem_info, return it like in get_sys_name().
 fn get_mem_info(sys: System) {
     // RAM information (non swap):
-    let total_memory = sys.total_memory().to_string();
-    let used_memory = sys.used_memory().to_string();
-
-    println!("\x1b[93;1m{}\x1b[0m: {}/{} MiB", "Memory", &used_memory[..4], &total_memory[..4]);
+    const KB_TO_MIB: f64 = 0.00095367431640625;
+    let total_memory = sys.total_memory() as f64 * KB_TO_MIB;
+    let used_memory = sys.used_memory() as f64 * KB_TO_MIB;
+    println!("\x1b[93;1m{}\x1b[0m: {}/{} MiB", "Memory", used_memory.floor(), total_memory.floor());
 }
 
 fn get_mac_friendly_name(ver_num: &str) -> String {
