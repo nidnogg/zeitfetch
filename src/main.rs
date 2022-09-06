@@ -1,4 +1,4 @@
-use sysinfo::{System, SystemExt, CpuExt, ComponentExt};
+use sysinfo::{System, SystemExt, CpuExt};
 use home;
 use std::process::Command;
 use std::process::Stdio;
@@ -244,10 +244,25 @@ fn get_cpu_name(sys: &System) -> String {
 }
 
 fn get_gpu_name(sys: &System) -> String {
-    let gpu_name = String::from("GPu");
-    let final_gpu_name = format!("\x1b[93;1m{}\x1b[0m: {}", "GPU", gpu_name);
-    println!("{:?}", sys.components()[0]);
-    final_gpu_name
+    if let Some(sys_name) = sys.name() {
+        if sys_name.contains("Windows") {
+            let win_fetch_gpu = Command::new("wmic path win32_VideoController get name")
+                // .args(["path", "win32_VideoController", "get", "name"])
+                .output()
+                .expect("Failed to fetch Win32 GPU Data");
+
+            let raw_gpu_name = win_fetch_gpu.stdout;
+            println!("{:?}", raw_gpu_name);
+            // wmic path win32_VideoController get name
+            let final_gpu_name = format!("\x1b[93;1m{}\x1b[0m: {:?}", "GPU", raw_gpu_name);
+            final_gpu_name
+
+        } else {
+            String::from("")
+        }
+    } else {
+        String::from("N/A")
+    } 
 }
 
 fn get_mem_info(sys: &System) -> String {

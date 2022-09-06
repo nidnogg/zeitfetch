@@ -52,8 +52,7 @@ pub fn get_logo_by_distro(sys_name: &str) -> String {
         "fedora" => {
             let logo = String::from(
                 "
-            
-            .',;::::;,'.               
+                .',;::::;,'.               
             .';:cccccccccccc:;,.            
          .;cccccccccccccccccccccc;.        
        .:cccccccccccccccccccccccccc:.        
@@ -71,8 +70,7 @@ pub fn get_logo_by_distro(sys_name: &str) -> String {
    cccccccc;.:odl:.;cccccccccccccc:,.        
    :cccccccccccccccccccccccccccc:'.       
    .:cccccccccccccccccccccc:;,..
-     '::cccccccccccccc::;,.        
-     ",
+     '::cccccccccccccc::;,.",
             );
             logo
         }
