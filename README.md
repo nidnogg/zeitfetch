@@ -1,9 +1,8 @@
 <div align="center">
     <h1>zeitfetch</h1>
 
-    Instantaneous system information
-    Linux • macOS • Windows
-    ╘══════════════════════╛    
+Instantaneous system information
+Linux • macOS • Windows
 
 </div>
 
