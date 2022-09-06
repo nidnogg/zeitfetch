@@ -1,4 +1,4 @@
-use sysinfo::{System, SystemExt};
+use sysinfo::{System, SystemExt, CpuExt, ComponentExt};
 use home;
 use std::process::Command;
 use std::process::Stdio;
@@ -50,14 +50,16 @@ fn generate_info() {
     let os_ver = get_os_ver(&sys);
     let cpu_num = format!("\x1b[93;1m{}\x1b[0m: {}", "NB CPUs", sys.cpus().len());
     // sys = get_sys_components(sys);
+    let cpu_name = get_cpu_name(&sys);
+    let gpu_name =  get_gpu_name(&sys);
     let mem_info = get_mem_info(&sys);  
     let palette = get_palette();
     let logo = get_logo(&sys);
-    
+
     // Structure and output system information
     let sys_info_col = format!(
-        "\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n", 
-        user_prompt, sys_name, host_name, uptime, kernel, os_ver, cpu_num, mem_info, palette);
+        "\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n", 
+        user_prompt, sys_name, host_name, uptime, kernel, os_ver, cpu_num, cpu_name, gpu_name, mem_info, palette);
     let mut table = Table::new();
     table.set_format(*format::consts::FORMAT_CLEAN);
     table.add_row(row![&logo, &sys_info_col]);
@@ -234,21 +236,26 @@ fn get_os_ver(sys: &System) -> String {
     }
 }
 
-// fn get_sys_components(sys: &System) -> String {
-//     for component in sys.components() {
-//         println!("{:?}", component);
-//     }
-//     // println!("\x1b[93;1m{}\x1b[0m: {}/{} MiB", "Memory", used_memory.floor(), total_memory.floor());
-// }
+fn get_cpu_name(sys: &System) -> String {
+    let cpu_brand = sys.cpus()[0].brand();
+    let cpu_frequency = sys.cpus()[0].frequency();
+    let full_cpu_name = format!("\x1b[93;1m{}\x1b[0m: {} @ {} GHz",  "CPU", cpu_brand, cpu_frequency);
+    full_cpu_name
+}
 
-// Warning - if sys is needed after get_mem_info, return it like in get_sys_name().
+fn get_gpu_name(sys: &System) -> String {
+    let gpu_name = String::from("GPu");
+    let final_gpu_name = format!("\x1b[93;1m{}\x1b[0m: {}", "GPU", gpu_name);
+    println!("{:?}", sys.components()[0]);
+    final_gpu_name
+}
+
 fn get_mem_info(sys: &System) -> String {
     // RAM information (non swap):
     const KB_TO_MIB: f64 = 0.00095367431640625;
     let total_memory = sys.total_memory() as f64 * KB_TO_MIB;
     let used_memory = sys.used_memory() as f64 * KB_TO_MIB;
     let mem_info = format!("\x1b[93;1m{}\x1b[0m: {}/{} MiB", "Memory", used_memory.floor(), total_memory.floor());
-    
     mem_info
 }
 
@@ -260,7 +267,6 @@ fn get_palette() -> String {
         \x1b[94;1m███\x1b[0m\x1b[95;1m███\x1b[0m\x1b[96;1m███\x1b[0m\x1b[100;1m███\x1b[0m\
         "
     );
-
     palette
 }
 
