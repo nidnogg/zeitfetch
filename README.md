@@ -6,6 +6,10 @@
     <p> 
         <img src="https://img.shields.io/github/license/nidnogg/zeitfetch?style=for-the-badge" alt="shield-license" />
     </p>
+    <p>
+        <img src="https://img.shields.io/github/repo-size/nidnogg/zeitfetch?color=orange&logo=rust&style=for-the-badge" alt="CI" />
+    </p>
+ 
        
   
 
