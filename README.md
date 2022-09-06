@@ -1,19 +1,12 @@
 <div align="center">
-    <h1>zeitfetch</h1>
+<h1> nidnogg :coffee: </h1>
 
-    Instantaneous system information
-    Linux • macOS • Windows
+Instantaneous system information <br />
+Linux • macOS • Windows <br />
     
-    
-    <a href="https://img.shields.io/github/license/nidnogg/zeitfetch?style=for-the-badge">
-        <img src="https://img.shields.io/github/license/nidnogg/zeitfetch?style=for-the-badge" alt="shield-license" />
-    </a>
-    
-    <a href="https://img.shields.io/github/repo-size/nidnogg/zeitfetch?color=orange&logo=rust&style=for-the-badge">
-        <img src="https://img.shields.io/github/repo-size/nidnogg/zeitfetch?color=orange&logo=rust&style=for-the-badge" alt="CI" />    
-    </a>
+![License](https://img.shields.io/github/license/nidnogg/zeitfetch?style=for-the-badge)
+![Size](https://img.shields.io/github/repo-size/nidnogg/zeitfetch?color=orange&logo=rust&style=for-the-badge)
 </div>
-
 
 ## About
 
