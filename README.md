@@ -1,16 +1,12 @@
 <div align="center">
-    <h1>zeitfetch</h1>
+<h1> zeitfetch 📸 </h1>
 
-    Instantaneous system information
-    Linux • macOS • Windows
+Instantaneous snapshots of system information <br />
+Linux • macOS • Windows <br />
     
-    <br />
-    
-    ![License](https://img.shields.io/github/license/nidnogg/zeitfetch?style=for-the-badge)
-    ![Size](https://img.shields.io/github/repo-size/nidnogg/zeitfetch?color=orange&logo=rust&style=for-the-badge)
-
+![License](https://img.shields.io/github/license/nidnogg/zeitfetch?style=for-the-badge)
+![Size](https://img.shields.io/github/repo-size/nidnogg/zeitfetch?color=orange&logo=rust&style=for-the-badge)
 </div>
-
 
 ## About
 
@@ -37,9 +33,7 @@ Current to-be-implemented list:
 * More distro ASCII Art in hex escape code format.
 ## Disclaimer for ASCII logos
 
-Most of the ASCII art from _zeitfetch_ is not originally made by me, only slightly modified here and there.
-
-If any artists feel like this is an issue in particular, please feel free to drop me an email @ [henriquevt98@gmail.com](mailto:henriquevt98@gmail.com) and I'll remove any infringing works ASAP.
+Most of the ASCII art from _zeitfetch_ is not originally made by me, only slightly modified here and there. Here's a list of the currently sourced ones:
 
 * Windows 11 logo sourced from kiedtl's [winfetch](https://github.com/kiedtl/winfetch)
 * Debian logo sourced from Dylan Araps'
@@ -47,6 +41,5 @@ If any artists feel like this is an issue in particular, please feel free to dro
 * Ubuntu logo sourced from KittyKatt's 
   [screenfetch](https://github.com/KittyKatt/screenFetch)
 
-
-[libmacchina]: https://github.com/Macchina-CLI/libmacchina
+If any artists feel like this is an issue in particular, please feel free to drop me an email @ [henriquevt98@gmail.com](mailto:henriquevt98@gmail.com) and I'll remove any infringing works ASAP.
 
