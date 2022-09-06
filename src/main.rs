@@ -1,5 +1,6 @@
 use sysinfo::{System, SystemExt, CpuExt};
 use home;
+use std::str;
 use std::process::Command;
 use std::process::Stdio;
 use std::io::{Read, Write};
@@ -239,24 +240,37 @@ fn get_os_ver(sys: &System) -> String {
 fn get_cpu_name(sys: &System) -> String {
     let cpu_brand = sys.cpus()[0].brand();
     let cpu_frequency = sys.cpus()[0].frequency();
-    let full_cpu_name = format!("\x1b[93;1m{}\x1b[0m: {} @ {} GHz",  "CPU", cpu_brand, cpu_frequency);
+    let full_cpu_name = format!("\x1b[93;1m{}\x1b[0m: {} @ {} GHz", "CPU", cpu_brand.trim(), cpu_frequency);
     full_cpu_name
 }
 
 fn get_gpu_name(sys: &System) -> String {
+    // works on wsl, needs formatting and grep: lspci | grep -i --color 'vga\|3d\|2d'
     if let Some(sys_name) = sys.name() {
+        // Windows
         if sys_name.contains("Windows") {
-            let win_fetch_gpu = Command::new("wmic path win32_VideoController get name")
-                // .args(["path", "win32_VideoController", "get", "name"])
+            let win_fetch_gpu = Command::new("wmic")
+                .args(["path", "win32_VideoController", "get", "name"])
                 .output()
-                .expect("Failed to fetch Win32 GPU Data");
+                .expect("Failed to fetch Win32 GPU data");
 
-            let raw_gpu_name = win_fetch_gpu.stdout;
-            println!("{:?}", raw_gpu_name);
+            let gpu_name_buf = win_fetch_gpu.stdout;
             // wmic path win32_VideoController get name
-            let final_gpu_name = format!("\x1b[93;1m{}\x1b[0m: {:?}", "GPU", raw_gpu_name);
-            final_gpu_name
+            // nf uses get caption
+            let processed_gpu_name = match str::from_utf8(&gpu_name_buf) {
+                Ok(result) => result,
+                Err(e) => panic!("Failed to process Win32 GPU data")
+            };
 
+            let trimmed_gpu_name: String = processed_gpu_name
+                .chars() 
+                .take(0)
+                .chain(processed_gpu_name.chars().skip(4))
+                .collect();
+        
+            let final_gpu_name = format!("\x1b[93;1m{}\x1b[0m: {}", "GPU", trimmed_gpu_name.trim());
+            final_gpu_name
+        // Linux 
         } else {
             String::from("")
         }
