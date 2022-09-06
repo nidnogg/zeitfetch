@@ -3,10 +3,15 @@
 
     Instantaneous system information
     Linux • macOS • Windows
-    <p align="center">
-        <img src="https://img.shields.io/github/license/nidnogg/zeitfetch?style=for-the-badge" alt="shield-license">
-        <img src="https://img.shields.io/github/repo-size/nidnogg/zeitfetch?color=orange&logo=rust&style=for-the-badge" alt="CI">       
-    </p>
+    
+    
+    <a href="https://img.shields.io/github/license/nidnogg/zeitfetch?style=for-the-badge">
+        <img src="https://img.shields.io/github/license/nidnogg/zeitfetch?style=for-the-badge" alt="shield-license" />
+    </a>
+    
+    <a href="https://img.shields.io/github/repo-size/nidnogg/zeitfetch?color=orange&logo=rust&style=for-the-badge">
+        <img src="https://img.shields.io/github/repo-size/nidnogg/zeitfetch?color=orange&logo=rust&style=for-the-badge" alt="CI" />    
+    </a>
 </div>
 
 
