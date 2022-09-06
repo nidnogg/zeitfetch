@@ -1,10 +1,13 @@
 <div align="center">
     <h1>zeitfetch</h1>
 
-Instantaneous system information
-Linux • macOS • Windows
+    Instantaneous system information
+    Linux • macOS • Windows
+
+    <img src="https://img.shields.io/github/repo-size/nidnogg/zeitfetch?color=orange&logo=rust&style=for-the-badge" alt="CI">
 
 </div>
+
 
 ## About
 
