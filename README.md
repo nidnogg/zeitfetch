@@ -32,7 +32,7 @@ Current to-be-implemented list:
 * Proper macOS implementation (I'm off my Mac system for a while);
 * CPU and GPU information (not working from sys_info, apparently);
 * More distro ASCII Art in hex escape code format.
-# Disclaimer for ASCII logos
+## Disclaimer for ASCII logos
 
 Most of the ASCII art from _zeitfetch_ is not originally made by me, only slightly modified here and there.
 
