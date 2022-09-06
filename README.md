@@ -1,7 +1,7 @@
 <div align="center">
-<h1> nidnogg :coffee: </h1>
+<h1> zeitfetch 📸 </h1>
 
-Instantaneous system information <br />
+Instantaneous snapshots of system information <br />
 Linux • macOS • Windows <br />
     
 ![License](https://img.shields.io/github/license/nidnogg/zeitfetch?style=for-the-badge)
