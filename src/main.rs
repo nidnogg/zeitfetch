@@ -15,12 +15,15 @@ fn main() {
 }
 
 fn get_logo(sys: &System) -> String {
-
     if let Some(sys_name) = sys.name() {
         if sys_name.contains("22000") && sys_name.contains("Windows") {
             logo::get_logo_by_distro("win11")
         } else if sys_name.contains("Windows") {
             logo::get_logo_by_distro("win")
+        } else if sys_name.contains("Debian") {
+            logo::get_logo_by_distro("deb")
+        } else if sys_name.contains("Ubuntu") {
+            logo::get_logo_by_distro("ubuntu")
         } else {
             logo::get_logo_by_distro("win")
         }
