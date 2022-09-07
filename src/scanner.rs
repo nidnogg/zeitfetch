@@ -281,7 +281,7 @@ pub fn get_gpu_name(sys: &System) -> String {
                 .unwrap();
 
             let mut cmd_grep = Command::new("grep")
-                .args(["-i", "--color", "'vga\\|3d\\|2d'"])
+                .args(["-i", "--color", "\'vga\\|3d\\|2d\'"])
                 .stdin(Stdio::piped())
                 .stdout(Stdio::piped())
                 .spawn()
