@@ -28,7 +28,6 @@ fn generate_info() {
     let kernel = scanner::get_kernel(&sys);
     let os_ver = scanner::get_os_ver(&sys);
     let cpu_num = format!("\x1b[93;1m{}\x1b[0m: {}", "NB CPUs", sys.cpus().len());
-    // sys = get_sys_components(sys);
     let cpu_name = scanner::get_cpu_name(&sys);
     let gpu_name = scanner::get_gpu_name(&sys);
     let mem_info = scanner::get_mem_info(&sys);

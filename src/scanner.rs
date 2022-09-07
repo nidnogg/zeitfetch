@@ -273,42 +273,50 @@ pub fn get_gpu_name(sys: &System) -> String {
             final_gpu_name
         // Linux
         } else {
-            String::from("")
+            // lspci | grep -i --color 'vga\|3d\|2d'
+            println!("piru");
+            let mut cmd_lspci = Command::new("lspci")
+                .stdout(Stdio::piped())
+                .spawn()
+                .unwrap();
+
+            let mut cmd_grep = Command::new("grep")
+                .args(["-i", "--color", "'vga\\|3d\\|2d'"])
+                .stdin(Stdio::piped())
+                .stdout(Stdio::piped())
+                .spawn()
+                .unwrap();
+
+            if let Some(ref mut stdout) = cmd_lspci.stdout {
+                if let Some(ref mut stdin) = cmd_grep.stdin {
+                    let mut buf: Vec<u8> = Vec::new();
+                    stdout.read_to_end(&mut buf).unwrap();
+                    stdin.write_all(&buf).unwrap();
+                }
+            }
+
+            let gpu_name_buf = cmd_grep.wait_with_output().unwrap().stdout;
+
+            let processed_gpu_name = match str::from_utf8(&gpu_name_buf) {
+                Ok(result) => result,
+                Err(e) => panic!("Failed to process Win32 GPU data: {:?}", e),
+            };
+            // let sys_friendly_num = &String::from_utf8(res).unwrap()[16..];
+            // let sys_friendly_num_no_whitespace = &sys_friendly_num[..sys_friendly_num.len() - 1];
+
+            let mut processed_gpu_no_newline = String::from(processed_gpu_name);
+            processed_gpu_no_newline.pop();
+            let final_sys_name = format!(
+                "\x1b[93;1m{}\x1b[0m: {}",
+                "GPU",
+                processed_gpu_no_newline
+            );
+
+
+            final_sys_name
         }
     } else {
-        // lspci | grep -i --color 'vga\|3d\|2d'
-        let mut cmd_lspci = Command::new("lspci")
-                    .stdout(Stdio::piped())
-                    .spawn()
-                    .unwrap();
-
-                let mut cmd_grep = Command::new("grep")
-                    .args(["-i", "--color", "'vga\\|3d\\|2d'"])
-                    .stdin(Stdio::piped())
-                    .stdout(Stdio::piped())
-                    .spawn()
-                    .unwrap();
-
-                if let Some(ref mut stdout) = cmd_lspci.stdout {
-                    if let Some(ref mut stdin) = cmd_grep.stdin {
-                        let mut buf: Vec<u8> = Vec::new();
-                        stdout.read_to_end(&mut buf).unwrap();
-                        stdin.write_all(&buf).unwrap();
-                    }
-                }
-                
-                let res = cmd_grep.wait_with_output().unwrap().stdout;
-                let sys_friendly_num = &String::from_utf8(res).unwrap()[16..];
-                let sys_friendly_num_no_whitespace =
-                    &sys_friendly_num[..sys_friendly_num.len() - 1];
-
-                let final_sys_name = format!(
-                    "\x1b[93;1m{}\x1b[0m: {}",
-                    "GPU",
-                    sys_friendly_num_no_whitespace
-                );
-                
-                final_sys_name
+        String::from("N/A")
     }
 }
 
