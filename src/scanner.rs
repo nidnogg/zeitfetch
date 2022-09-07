@@ -276,7 +276,39 @@ pub fn get_gpu_name(sys: &System) -> String {
             String::from("")
         }
     } else {
-        String::from("N/A")
+        // lspci | grep -i --color 'vga\|3d\|2d'
+        let mut cmd_lspci = Command::new("lspci")
+                    .stdout(Stdio::piped())
+                    .spawn()
+                    .unwrap();
+
+                let mut cmd_grep = Command::new("grep")
+                    .args(["-i", "--color", "'vga\\|3d\\|2d'"])
+                    .stdin(Stdio::piped())
+                    .stdout(Stdio::piped())
+                    .spawn()
+                    .unwrap();
+
+                if let Some(ref mut stdout) = cmd_lspci.stdout {
+                    if let Some(ref mut stdin) = cmd_grep.stdin {
+                        let mut buf: Vec<u8> = Vec::new();
+                        stdout.read_to_end(&mut buf).unwrap();
+                        stdin.write_all(&buf).unwrap();
+                    }
+                }
+                
+                let res = cmd_grep.wait_with_output().unwrap().stdout;
+                let sys_friendly_num = &String::from_utf8(res).unwrap()[16..];
+                let sys_friendly_num_no_whitespace =
+                    &sys_friendly_num[..sys_friendly_num.len() - 1];
+
+                let final_sys_name = format!(
+                    "\x1b[93;1m{}\x1b[0m: {}",
+                    "GPU",
+                    sys_friendly_num_no_whitespace
+                );
+                
+                final_sys_name
     }
 }
 
