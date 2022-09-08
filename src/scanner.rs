@@ -274,7 +274,6 @@ pub fn get_gpu_name(sys: &System) -> String {
         // Linux
         } else {
             // lspci | grep -i --color 'vga\|3d\|2d'
-            println!("piru");
             let mut cmd_lspci = Command::new("lspci")
                 .stdout(Stdio::piped())
                 .spawn()
