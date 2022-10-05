@@ -26,10 +26,21 @@ Fully cross platform compatible with Windows, macOS (almost there), and most Lin
 
 ## Installation
 
-For the time being, since neither a crate nor a scoop package have been published yet, an executable titled **zeitfetch** can be created under the folder `target/release` by running `cargo run` in the root directory. This assumes you have both **Rust** and **Cargo** installed.
+With **Cargo** installed, run: 
+
+```bash
+cargo install zeitfetch
+```
 ## Contribution 
 
 If you feel like contributing to _zeitfetch_, feel free to fork it and open up a PR. There are no particular coding guidelines so any improvements you can think of are fine.
+
+To run the development environment, make sure you have both **Rust** and **Cargo** installed.
+After that, in the root directory, run: 
+
+```bash
+cargo run
+``` 
 
 Current to-be-implemented list:
 * Proper macOS implementation (I'm off my Mac system for a while, help would be really appreciated here);
