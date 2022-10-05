@@ -9,16 +9,26 @@ use crate::logo::*;
 
 pub fn get_logo(sys: &System) -> String {
     if let Some(sys_name) = sys.name() {
-        if sys_name.contains("22000") && sys_name.contains("Windows") {
-            get_logo_by_distro("win11")
-        } else if sys_name.contains("Windows") {
-            get_logo_by_distro("win")
+        if sys_name.contains("Windows") {
+            if let Some(kernel) = sys.kernel_version() {
+                if kernel.contains("22000") {
+                    get_logo_by_distro("win11")
+                } else {
+                    get_logo_by_distro("win")
+                }
+            } else {
+                get_logo_by_distro("win")
+            }
         } else if sys_name.contains("Debian") {
             get_logo_by_distro("deb")
         } else if sys_name.contains("Ubuntu") {
             get_logo_by_distro("ubuntu")
+        } else if sys_name.contains("Fedora") {
+            get_logo_by_distro("fedora")
+        } else if sys_name.contains("Arch") {
+            get_logo_by_distro("arch")
         } else {
-            get_logo_by_distro("win")
+            get_logo_by_distro("linux")
         }
     } else {
         String::from("")
@@ -122,11 +132,29 @@ pub fn get_sys_name(sys: &System) -> String {
             // Windows 11
             } else if sys_name.contains("Windows") {
                 // let final_sys_name = format!("\x1b[93;1m{}\x1b[0m: {} 11", "OS", sys_name);
-                let final_sys_name = format!(
-                    "\x1b[93;1m{}\x1b[0m!",
-                    "FIX ME: Windows matches but 22000 doesn't"
-                );
-                final_sys_name
+                if let Some(kernel) = sys.kernel_version() {
+                    if kernel.contains("22000") {
+                        let final_sys_name = format!(
+                            "\x1b[93;1m{}\x1b[0m: {}",
+                            "OS",
+                            "Windows 11"
+                        );
+                        final_sys_name 
+                    } else {
+                        let final_sys_name = format!(
+                            "\x1b[93;1m{}\x1b[0m: {}",
+                            "OS",
+                            "Windows 10"
+                        );
+                        final_sys_name 
+                    }
+                } else {
+                    let final_sys_name = format!(
+                        "\x1b[93;1m{}\x1b[0m",
+                        "Windows"
+                    );
+                    final_sys_name 
+                }
             } else {
                 if let Some(os_ver) = sys.os_version() {
                     let final_sys_name =
@@ -300,6 +328,7 @@ pub fn get_gpu_name(sys: &System) -> String {
                 Ok(result) => result,
                 Err(e) => panic!("Failed to process Win32 GPU data: {:?}", e),
             };
+
             // let sys_friendly_num = &String::from_utf8(res).unwrap()[16..];
             // let sys_friendly_num_no_whitespace = &sys_friendly_num[..sys_friendly_num.len() - 1];
 

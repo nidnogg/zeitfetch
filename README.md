@@ -40,11 +40,13 @@ Most of the ASCII art from _zeitfetch_ is not originally made by me, only slight
 
 | OS | Author | Source
 | --- | --- | --- |
-| Windows 11 | [kiedtl](https://github.com/kiedtl) | [winfetch](https://github.com/kiedtl/winfetch) |
-| Windows 10 | [HotDog640](https://github.com/HotDog640) | [neofetch PR](https://github.com/dylanaraps/neofetch/issues/1466) |
 | Debian | [dylanaraps](https://github.com/dylanaraps) | [neofetch](https://github.com/dylanaraps/neofetch) |
 | Ubuntu | [KittyKatt](https://github.com/KittyKatt) | [screenfetch](https://github.com/KittyKatt/screenFetch) |
 | Fedora | likw1dus | [pagure.io](https://pagure.io/design/issue/736) |
+| Arch | [trizen](https://aur.archlinux.org/packages/alsi/) | [wiki.archlinux.org (alsi)](https://wiki.archlinux.org/title/ASCII_art) |
+| Windows 11 | [kiedtl](https://github.com/kiedtl) | [winfetch](https://github.com/kiedtl/winfetch) |
+| Windows 10 | [HotDog640](https://github.com/HotDog640) | [neofetch PR](https://github.com/dylanaraps/neofetch/issues/1466) |
+| Linux | Joan Stark (jgs) | [Wikipedia](https://en.wikipedia.org/wiki/Joan_Stark) |
 
 If any artists feel like this is an issue in particular, please feel free to drop me an email @ [henriquevt98@gmail.com](mailto:henriquevt98@gmail.com) and I'll remove any infringing works ASAP.
 

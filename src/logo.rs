@@ -3,7 +3,7 @@ pub fn get_logo_by_distro(sys_name: &str) -> String {
         "deb" => {
             let logo = String::from(
                 "
-\x1b[1m    _,.ss$$$$$gg.          
+\x1b[1m       _,.ss$$$$$gg.          
 \x1b[1m    ,g$$$$$$$$$$$$$$$P.       
 \x1b[1m  ,g$$P`'     ```Y$$.`.        
 \x1b[1m ,$$P''              `$$$.     
@@ -52,25 +52,25 @@ pub fn get_logo_by_distro(sys_name: &str) -> String {
         "fedora" => {
             let logo = String::from(
                 "
-                .',;::::;,'.               
-            .';:cccccccccccc:;,.            
-         .;cccccccccccccccccccccc;.        
-       .:cccccccccccccccccccccccccc:.        
-     .;ccccccccccccc;.:dddl:.;ccccccc;.     
-    .:ccccccccccccc;OWMKOOXMWd;ccccccc:.    
-   .:ccccccccccccc;KMMc;cc;xMMc:ccccccc:.   
-   ,cccccccccccccc;MMM.;cc;;WW::cccccccc,   
-   :cccccccccccccc;MMM.;cccccccccccccccc:   
-   :ccccccc;oxOOOo;MMM0OOk.;cccccccccccc:  
-   cccccc:0MMKxdd:;MMMkddc.;cccccccccccc; 
-   ccccc:XM0';cccc;MMM.;cccccccccccccccc'   
-   ccccc;MMo;ccccc;MMW.;ccccccccccccccc;    
-   ccccc;0MNc.ccc.xMMd:ccccccccccccccc;     
-   cccccc;dNMWXXXWM0::cccccccccccccc:,      
-   cccccccc;.:odl:.;cccccccccccccc:,.        
-   :cccccccccccccccccccccccccccc:'.       
-   .:cccccccccccccccccccccc:;,..
-     '::cccccccccccccc::;,.",
+\x1b[94;1m             .',;::::;,'.               
+\x1b[94;1m         .';:cccccccccccc:;,.            
+\x1b[94;1m      .;cccccccccccccccccccccc;.        
+\x1b[94;1m    .:cccccccccccccccccccccccccc:.        
+\x1b[94;1m  .;ccccccccccccc;\x1b[0m.:dddl:.\x1b[94;1m;ccccccc;.     
+\x1b[94;1m .:ccccccccccccc;\x1b[0mOWMKOOXMWd\x1b[94;1m;ccccccc:.    
+\x1b[94;1m.:ccccccccccccc;\x1b[0mKMMc\x1b[94;1m;cc;\x1b[0mxMMc\x1b[94;1m:ccccccc:.   
+\x1b[94;1m,cccccccccccccc;\x1b[0mMMM.\x1b[94;1m;cc;\x1b[0m;WW:\x1b[94;1m:cccccccc,   
+\x1b[94;1m:cccccccccccccc;\x1b[0mMMM.\x1b[94;1m;cccccccccccccccc:   
+\x1b[94;1m:ccccccc;\x1b[0moxOOOo\x1b[94;1m;\x1b[0mMMM0OOk.\x1b[94;1m;cccccccccccc:  
+\x1b[94;1mcccccc:\x1b[0m0MMKxdd:\x1b[94;1m;\x1b[0mMMMkddc.\x1b[94;1m;cccccccccccc; 
+\x1b[94;1mccccc:\x1b[0mXM0'\x1b[94;1m;cccc;\x1b[0mMMM.\x1b[94;1m;cccccccccccccccc'   
+\x1b[94;1mccccc;\x1b[0mMMo\x1b[94;1m;ccccc;\x1b[0mMMW.\x1b[94;1m;ccccccccccccccc;    
+\x1b[94;1mccccc;\x1b[0m0MNc.\x1b[94;1mccc\x1b[0m.xMMd\x1b[94;1m:ccccccccccccccc;     
+\x1b[94;1mcccccc;\x1b[0mdNMWXXXWM0:\x1b[94;1m:cccccccccccccc:,      
+\x1b[94;1mcccccccc;\x1b[0m.:odl:.\x1b[94;1m;cccccccccccccc:,.        
+\x1b[94;1m:cccccccccccccccccccccccccccc:'.       
+\x1b[94;1m.:cccccccccccccccccccccc:;,..
+\x1b[94;1m  '::cccccccccccccc::;,.\x1b[0mm",
             );
             logo
         }
@@ -98,22 +98,71 @@ pub fn get_logo_by_distro(sys_name: &str) -> String {
         }
         "win" => {
             let logo = String::from(
+                "    
+\x1b[34m                  .oodMMMMMMMMMMMMM
+\x1b[34m      ..oodMMM  MMMMMMMMMMMMMMMMMMM
+\x1b[34moodMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM
+\x1b[34mMMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM
+\x1b[34mMMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM
+\x1b[34mMMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM
+\x1b[34mMMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM
+\x1b[34mMMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM
+
+\x1b[34mMMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM
+\x1b[34mMMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM
+\x1b[34mMMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM
+\x1b[34mMMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM
+\x1b[34mMMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM
+\x1b[34m`^^^^^^MMMMMMM  MMMMMMMMMMMMMMMMMMM
+\x1b[34m    ````^^^^  ^^MMMMMMMMMMMMMMMMMMM
+\x1b[34m                   ````^^^^^^MMMMMM\x1b[0m
+    ",
+            );
+            logo
+        }
+        "arch" => {
+            let logo = String::from(
                 "
-\x1b[34;1mlllllllllllllll   lllllllllllllll
-\x1b[34;1mlllllllllllllll   lllllllllllllll
-\x1b[34;1mlllllllllllllll   lllllllllllllll  
-\x1b[34;1mlllllllllllllll   lllllllllllllll
-\x1b[34;1mlllllllllllllll   lllllllllllllll 
-\x1b[34;1mlllllllllllllll   lllllllllllllll
-\x1b[34;1mlllllllllllllll   lllllllllllllll
-                                
-\x1b[34;1mlllllllllllllll   lllllllllllllll 
-\x1b[34;1mlllllllllllllll   lllllllllllllll
-\x1b[34;1mlllllllllllllll   lllllllllllllll
-\x1b[34;1mlllllllllllllll   lllllllllllllll
-\x1b[34;1mlllllllllllllll   lllllllllllllll
-\x1b[34;1mlllllllllllllll   lllllllllllllll
-\x1b[34;1mlllllllllllllll   lllllllllllllll\x1b[0m
+ \x1b[94;1m                ##
+ \x1b[94;1m               ####
+ \x1b[94;1m              ######
+ \x1b[94;1m             ########
+ \x1b[94;1m            ##########
+ \x1b[94;1m           ############
+ \x1b[94;1m          ##############
+ \x1b[94;1m         ################
+ \x1b[94;1m        ##################
+ \x1b[94;1m       ####################
+ \x1b[94;1m      ######################
+ \x1b[94;1m     #########      #########
+ \x1b[94;1m    ##########      ##########
+ \x1b[94;1m   ###########      ###########
+ \x1b[94;1m  ##########          ##########
+ \x1b[94;1m #######                  #######
+ \x1b[94;1m####                          ####
+ \x1b[94;1m###                              ###\x1b[0m",
+            );
+            logo
+        }
+        "linux" => {
+            let logo = String::from(
+                "
+\x1b[1m        a8888b.        
+\x1b[1m       d888888b.         
+\x1b[1m       8P\"YP\"Y88         
+\x1b[1m       8|o||o|88         
+\x1b[1m       8\x1b[93;1m'    .\x1b[0m88         
+\x1b[1m       8\x1b[93;1m`._.'\x1b[0m Y8.       
+\x1b[1m      d/      `8b.       
+\x1b[1m     dP        Y8b.     
+\x1b[1m    d8:       ::88b.  
+\x1b[1m   d8\"         'Y88b      
+\x1b[1m  :8P           :888
+\x1b[1m   8a.         _a88P
+\x1b[1m \x1b[93;1m._/\"Y\x1b[0maa     .\x1b[93;1m|\x1b[0m 88P\x1b[93;1m|\x1b[0m
+\x1b[1m \x1b[93;1m\\    Y\x1b[0mP\"    `\x1b[93;1m|     `.\x1b[0m
+\x1b[1m \x1b[93;1m/     \\\x1b[0m.___.d\x1b[93;1m|    .'\x1b[0m
+\x1b[93;1m `--..__)     `._.'\x1b[0m
     ",
             );
             logo
