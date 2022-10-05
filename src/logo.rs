@@ -70,7 +70,31 @@ pub fn get_logo_by_distro(sys_name: &str) -> String {
 \x1b[94;1mcccccccc;\x1b[0m.:odl:.\x1b[94;1m;cccccccccccccc:,.        
 \x1b[94;1m:cccccccccccccccccccccccccccc:'.       
 \x1b[94;1m.:cccccccccccccccccccccc:;,..
-\x1b[94;1m  '::cccccccccccccc::;,.\x1b[0mm",
+\x1b[94;1m  '::cccccccccccccc::;,.\x1b[0m",
+            );
+            logo
+        }
+        "mac" => {
+            let logo = String::from(
+                "
+\x1b[92;1m                   'c.       
+\x1b[92;1m                ,xNMM.       
+\x1b[92;1m              .OMMMMo        
+\x1b[92;1m              OMMM0,         
+\x1b[92;1m    .;loddo:' loolloddol;.   
+\x1b[92;1m  cKMMMMMMMMMMNWMMMMMMMMMM0: 
+\x1b[93;1m.KMMMMMMMMMMMMMMMMMMMMMMMWd. 
+\x1b[93;1mXMMMMMMMMMMMMMMMMMMMMMMMX.   
+\x1b[91;1m;MMMMMMMMMMMMMMMMMMMMMMMM:    
+\x1b[91;1m:MMMMMMMMMMMMMMMMMMMMMMMM:    
+\x1b[91;1m.MMMMMMMMMMMMMMMMMMMMMMMMX.   
+\x1b[91;1mkMMMMMMMMMMMMMMMMMMMMMMMMWd. 
+\x1b[95;1m.XMMMMMMMMMMMMMMMMMMMMMMMMMMk
+\x1b[95;1m .XMMMMMMMMMMMMMMMMMMMMMMMMK.
+\x1b[94;1m   kMMMMMMMMMMMMMMMMMMMMMMd  
+\x1b[94;1m    ;KMMMMMMMWXXWMMMMMMMk.   
+\x1b[94;1m      .cooc,.    .,coo:.\x1b[0m     
+                "
             );
             logo
         }

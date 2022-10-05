@@ -27,6 +27,8 @@ pub fn get_logo(sys: &System) -> String {
             get_logo_by_distro("fedora")
         } else if sys_name.contains("Arch") {
             get_logo_by_distro("arch")
+        } else if sys_name.contains("Darwin") || sys_name.contains("Mac") {
+            get_logo_by_distro("mac")
         } else {
             get_logo_by_distro("linux")
         }
@@ -273,6 +275,7 @@ pub fn get_cpu_name(sys: &System) -> String {
     full_cpu_name
 }
 
+#[allow(dead_code)]
 pub fn get_gpu_name(sys: &System) -> String {
     // works on wsl, needs formatting and grep: lspci | grep -i --color 'vga\|3d\|2d'
     if let Some(sys_name) = sys.name() {

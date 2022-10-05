@@ -15,9 +15,10 @@ _zeitfetch_ is a [neofetch](https://github.com/dylanaraps/neofetch) implementati
 
 Considering the shortage of fully cross platform screenfetch solutions (including Windows shells) this crate aims to fill that gap.
 
-It's in early stages at the moment, and support for Windows 10, Windows 11, Mac OS X, Debian, Ubuntu and Fedora is implemented for the time being, with more on the way. 
+It's in early stages at the moment, and support for Windows 10, Windows 11, Mac OS X, Debian, Ubuntu, Fedora and Arch is implemented for the time being, with more on the way. 
 
-Other distros/BSD should work fine, but there should be a lot of ASCII art missing. A placeholer Linux/BSD ASCII logo will be added for those systems not being actively worked on.
+If your Linux distribution is not listed/not being actively tested on, most likely it will be missing a dedicated OS logo, so an ASCII rendition of [Tux](https://en.wikipedia.org/wiki/Tux_(mascot)) will be displayed instead.
+
 
 ## Features
 
@@ -31,12 +32,13 @@ For the time being, since neither a crate nor a scoop package have been publishe
 If you feel like contributing to _zeitfetch_, feel free to fork it and open up a PR. There are no particular coding guidelines so any improvements you can think of are fine.
 
 Current to-be-implemented list:
-* Proper macOS implementation (I'm off my Mac system for a while);
-* CPU and GPU information (not working from sys_info, apparently);
-* More distro ASCII Art in hex escape code format.
+* Proper macOS implementation (I'm off my Mac system for a while, help would be really appreciated here);
+* GPU information (mixed results with native Linux builds, left it off for the time being);
+* More distro ASCII Art in hex escape code format;
+* Some refactoring here and there.
 ## Disclaimer for ASCII logos
 
-Most of the ASCII art from _zeitfetch_ is not originally made by me, only slightly modified here and there. All credits for them go to:
+Most of the ASCII art from _zeitfetch_ is not originally made by me, only slightly modified here and there. All of the respective credit for them is listed below:
 
 | OS | Author | Source
 | --- | --- | --- |
@@ -44,6 +46,7 @@ Most of the ASCII art from _zeitfetch_ is not originally made by me, only slight
 | Ubuntu | [KittyKatt](https://github.com/KittyKatt) | [screenfetch](https://github.com/KittyKatt/screenFetch) |
 | Fedora | likw1dus | [pagure.io](https://pagure.io/design/issue/736) |
 | Arch | [trizen](https://aur.archlinux.org/packages/alsi/) | [wiki.archlinux.org (alsi)](https://wiki.archlinux.org/title/ASCII_art) |
+| MacOS | [shelldandy](https://github.com/shelldandy) | [neofetch PR](https://github.com/dylanaraps/neofetch/issues/789) |
 | Windows 11 | [kiedtl](https://github.com/kiedtl) | [winfetch](https://github.com/kiedtl/winfetch) |
 | Windows 10 | [HotDog640](https://github.com/HotDog640) | [neofetch PR](https://github.com/dylanaraps/neofetch/issues/1466) |
 | Linux | Joan Stark (jgs) | [Wikipedia](https://en.wikipedia.org/wiki/Joan_Stark) |
