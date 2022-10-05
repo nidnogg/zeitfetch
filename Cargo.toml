@@ -2,8 +2,14 @@
 name = "zeitfetch"
 version = "0.1.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+authors = ["Henrique V (nidnogg)"]
+description = "Instantaneous snapshots of cross-platform system information"
+license = "MIT"
+keywords = ["fetch", "system", "info", "cli", "utils"]
+categories = ["command-line-utilities", "os", "rendering", "visualization", "filesystem"]
+repository = "https://github.com/nidnogg/zeitfetch"
+homepage = "https://github.com/nidnogg/zeitfetch"
+readme = "README.md"
 
 [dependencies]
 sysinfo = "0.24.7"
