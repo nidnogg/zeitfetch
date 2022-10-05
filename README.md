@@ -11,7 +11,7 @@ Linux • macOS • Windows <br />
 
 ## About
 
-_zeitfetch_ is a [neofetch](https://github.com/dylanaraps/neofetch) implementation in Rust aiming to be near instantaneous, with the least amount of dependencies possible.
+[_zeitfetch_](https://crates.io/crates/zeitfetch) is a [neofetch](https://github.com/dylanaraps/neofetch) implementation in Rust aiming to be near instantaneous, with the least amount of dependencies possible.
 
 Considering the shortage of fully cross platform screenfetch solutions (including Windows shells) this crate aims to fill that gap.
 
