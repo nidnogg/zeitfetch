@@ -11,7 +11,8 @@ pub fn get_logo(sys: &System) -> String {
     if let Some(sys_name) = sys.name() {
         if sys_name.contains("Windows") {
             if let Some(kernel) = sys.kernel_version() {
-                if kernel.contains("22000") {
+                let float_kernel = kernel.parse::<i32>().unwrap();
+                if float_kernel > 22000 {
                     get_logo_by_distro("win11")
                 } else {
                     get_logo_by_distro("win")
@@ -135,7 +136,8 @@ pub fn get_sys_name(sys: &System) -> String {
             } else if sys_name.contains("Windows") {
                 // let final_sys_name = format!("\x1b[93;1m{}\x1b[0m: {} 11", "OS", sys_name);
                 if let Some(kernel) = sys.kernel_version() {
-                    if kernel.contains("22000") {
+                    let float_kernel = kernel.parse::<i32>().unwrap();
+                    if float_kernel > 22000 {
                         let final_sys_name = format!(
                             "\x1b[93;1m{}\x1b[0m: {}",
                             "OS",
