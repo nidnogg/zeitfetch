@@ -22,7 +22,7 @@ If your Linux distribution is not listed/not being actively tested on, most like
 
 ## Features
 
-Fully cross platform compatible with Windows, macOS (almost there), and most Linux distros.
+Fully cross platform compatible with Windows, macOS, and most Linux distros.
 
 ## Installation
 
@@ -43,7 +43,6 @@ cargo run
 ``` 
 
 Current to-be-implemented list:
-* Proper macOS implementation (I'm off my Mac system for a while, help would be really appreciated here);
 * GPU information (mixed results with native Linux builds, left it off for the time being);
 * More distro ASCII Art in hex escape code format;
 * Some refactoring here and there.

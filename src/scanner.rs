@@ -128,7 +128,7 @@ pub fn get_sys_name(sys: &System) -> String {
                 let final_sys_name = format!(
                     "\x1b[93;1m{}\x1b[0m: {}",
                     "OS",
-                    get_mac_friendly_name(sys_friendly_num_no_whitespace)
+                    get_mac_friendly_name(String::from(sys_friendly_num_no_whitespace))
                 );
                 final_sys_name
 
@@ -267,9 +267,14 @@ pub fn get_os_ver(sys: &System) -> String {
 
 pub fn get_cpu_name(sys: &System) -> String {
     let cpu_brand = sys.cpus()[0].brand();
-    let cpu_frequency = sys.cpus()[0].frequency();
+    let cpu_frequency: String;
+    if cpu_brand.contains("Apple M") {
+        cpu_frequency = format!("")
+    } else {
+        cpu_frequency = format!("@ {} GHz", sys.cpus()[0].frequency());
+    }
     let full_cpu_name = format!(
-        "\x1b[93;1m{}\x1b[0m: {} @ {} GHz",
+        "\x1b[93;1m{}\x1b[0m: {} {}",
         "CPU",
         cpu_brand.trim(),
         cpu_frequency
@@ -379,7 +384,46 @@ pub fn get_palette() -> String {
     palette
 }
 
-fn get_mac_friendly_name(ver_num: &str) -> String {
+fn get_mac_friendly_name(untrimmed_ver_num: String) -> String {
+    // let ver_num_suffix = String::from(ver_num);
+    let ver_num = untrimmed_ver_num.trim();
+    if ver_num.starts_with("10.4") {
+        format!("{}", "Mac OS X Tiger")
+    } else if ver_num.starts_with("10.5") {
+        format!("{}", "Mac OS X Leopard")
+    } else if ver_num.starts_with("10.6") {
+        format!("{}", "Mac OS X Snow Leopard")
+    } else if ver_num.starts_with("10.7") {
+        format!("{}", "Mac OS X Lion")
+    } else if ver_num.starts_with("10.8") {
+        format!("{}", "OS X Mountain Lion")
+    } else if ver_num.starts_with("10.9") {
+        format!("{}", "OS X Mavericks")
+    } else if ver_num.starts_with("10.10") {
+        format!("{}", "OS X Yosemite")
+    } else if ver_num.starts_with("10.11") {
+        format!("{}", "OS X El Capitan")
+    } else if ver_num.starts_with("10.12") {
+        format!("{}", "macOS Sierra")
+    } else if ver_num.starts_with("10.13") {
+        format!("{}", "macOS High Sierra")
+    } else if ver_num.starts_with("10.14") {
+        format!("{}", "macOS Mojave")
+    } else if ver_num.starts_with("10.15") {
+        format!("{}", "macOS Catalina")
+    } else if ver_num.starts_with("10.16") {
+        format!("{}", "macOS Big Sur")
+    } else if ver_num.starts_with("11.") { 
+        format!("{}", "macOS Catalina")
+    } else if ver_num.starts_with("12.") {
+        format!("{}", "macOS Monterey")
+    } else if ver_num.starts_with("13.") {
+        format!("{}", "macOS Ventura")
+    } else {
+        format!("macOS {}", ver_num)
+    }
+
+
     // ripped straight out of neofetch - move this into separate file (sys_lists.rs) probably
     // with helper function to return it
     // use match pennies example to return this.{}
@@ -401,10 +445,8 @@ fn get_mac_friendly_name(ver_num: &str) -> String {
     //             12.*)  codename="macOS Monterey" ;;
     //             *)      codename=macOS ;;
     //         esac
-
+    
     // TO-DO Figure out how to match starting substring
-    match &*ver_num {
-        "10.11.6" => String::from("OS X El Capitan"),
-        &_ => String::from(""),
-    }
+    // if ver_num_
+    // }
 }
