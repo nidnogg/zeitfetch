@@ -31,6 +31,16 @@ With **Cargo** installed, run:
 ```bash
 cargo install zeitfetch
 ```
+
+## Note for running on terminal boot
+
+ Some people like to run fetch programs as soon as any terminal tab is open (e.g: from within `.bashrc`).
+ 
+ For this, within Operating Systems other than macOS, Rust binaries have to be reloaded to the PATH environment variables before running the desired command. When editing out a `.bashrc`, `.zshrc` file or whichever is available, adding the following line **before** _zeitfetch_ will ensure that it works correctly:
+
+ ```bash
+export PATH="$HOME/.cargo/bin:$PATH"
+```
 ## Contribution 
 
 If you feel like contributing to _zeitfetch_, feel free to fork it and open up a PR. There are no particular coding guidelines so any improvements you can think of are fine.
