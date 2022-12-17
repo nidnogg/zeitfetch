@@ -80,6 +80,6 @@ Most of the ASCII art from _zeitfetch_ is not originally made by me, only slight
 
 If any artists feel like this is an issue in particular, please feel free to drop me an email @ [henriquevt98@gmail.com](mailto:henriquevt98@gmail.com) and I'll remove any infringing works ASAP.
 
-## Latest release notes:
+## Latest Updates
 
-Added proper macOS support, and a corresponding Homebrew package
+Check out the [release notes](https://github.com/nidnogg/zeitfetch/releases)!
