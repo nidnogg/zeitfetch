@@ -26,12 +26,19 @@ Fully cross platform compatible with Windows, macOS, and most Linux distros.
 
 ## Installation
 
+### Using Cargo
+
 With **Cargo** installed, run: 
 
 ```bash
 cargo install zeitfetch
 ```
+### Using Homebrew
+On macOS, *zeitfetch* can also be installed via **brew**:
 
+```bash
+brew install zeitfetch
+```
 ## Note for running on terminal boot
 
  Some people like to run fetch programs as soon as any terminal tab is open (e.g: from within `.bashrc`).
@@ -73,3 +80,6 @@ Most of the ASCII art from _zeitfetch_ is not originally made by me, only slight
 
 If any artists feel like this is an issue in particular, please feel free to drop me an email @ [henriquevt98@gmail.com](mailto:henriquevt98@gmail.com) and I'll remove any infringing works ASAP.
 
+## Latest release notes:
+
+Added proper macOS support, and a corresponding Homebrew package
