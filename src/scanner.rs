@@ -385,68 +385,26 @@ pub fn get_palette() -> String {
 }
 
 fn get_mac_friendly_name(untrimmed_ver_num: String) -> String {
-    // let ver_num_suffix = String::from(ver_num);
     let ver_num = untrimmed_ver_num.trim();
-    if ver_num.starts_with("10.4") {
-        format!("{}", "Mac OS X Tiger")
-    } else if ver_num.starts_with("10.5") {
-        format!("{}", "Mac OS X Leopard")
-    } else if ver_num.starts_with("10.6") {
-        format!("{}", "Mac OS X Snow Leopard")
-    } else if ver_num.starts_with("10.7") {
-        format!("{}", "Mac OS X Lion")
-    } else if ver_num.starts_with("10.8") {
-        format!("{}", "OS X Mountain Lion")
-    } else if ver_num.starts_with("10.9") {
-        format!("{}", "OS X Mavericks")
-    } else if ver_num.starts_with("10.10") {
-        format!("{}", "OS X Yosemite")
-    } else if ver_num.starts_with("10.11") {
-        format!("{}", "OS X El Capitan")
-    } else if ver_num.starts_with("10.12") {
-        format!("{}", "macOS Sierra")
-    } else if ver_num.starts_with("10.13") {
-        format!("{}", "macOS High Sierra")
-    } else if ver_num.starts_with("10.14") {
-        format!("{}", "macOS Mojave")
-    } else if ver_num.starts_with("10.15") {
-        format!("{}", "macOS Catalina")
-    } else if ver_num.starts_with("10.16") {
-        format!("{}", "macOS Big Sur")
-    } else if ver_num.starts_with("11.") { 
-        format!("{}", "macOS Catalina")
-    } else if ver_num.starts_with("12.") {
-        format!("{}", "macOS Monterey")
-    } else if ver_num.starts_with("13.") {
-        format!("{}", "macOS Ventura")
-    } else {
-        format!("macOS {}", ver_num)
-    }
+    let friendly_name = match ver_num {
+        ver if ver.starts_with("10.4") => "Mac OS X Tiger",
+        ver if ver.starts_with("10.5") => "Mac OS X Leopard",
+        ver if ver.starts_with("10.6") => "Mac OS X Snow Leopard",
+        ver if ver.starts_with("10.7") => "Mac OS X Lion",
+        ver if ver.starts_with("10.8") => "OS X Mountain Lion",
+        ver if ver.starts_with("10.9") => "OS X Mavericks",
+        ver if ver.starts_with("10.10") => "OS X Yosemite",
+        ver if ver.starts_with("10.11") => "OS X El Capitan",
+        ver if ver.starts_with("10.12") => "macOS Sierra",
+        ver if ver.starts_with("10.13") => "macOS High Sierra",
+        ver if ver.starts_with("10.14") => "macOS Mojave",
+        ver if ver.starts_with("10.15") => "macOS Catalina",
+        ver if ver.starts_with("10.16") => "macOS Big Sur",
+        ver if ver.starts_with("11.") => "macOS Catalina",
+        ver if ver.starts_with("12.") => "macOS Monterey",
+        ver if ver.starts_with("13.") => "macOS Ventura",
+        _ => "macOS",
+    };
 
-
-    // ripped straight out of neofetch - move this into separate file (sys_lists.rs) probably
-    // with helper function to return it
-    // use match pennies example to return this.{}
-    // case $osx_version in
-    //             10.4*)  codename="Mac OS X Tiger" ;;
-    //             10.5*)  codename="Mac OS X Leopard" ;;
-    //             10.6*)  codename="Mac OS X Snow Leopard" ;;
-    //             10.7*)  codename="Mac OS X Lion" ;;
-    //             10.8*)  codename="OS X Mountain Lion" ;;
-    //             10.9*)  codename="OS X Mavericks" ;;
-    //             10.10*) codename="OS X Yosemite" ;;
-    //             10.11*) codename="OS X El Capitan" ;;
-    //             10.12*) codename="macOS Sierra" ;;
-    //             10.13*) codename="macOS High Sierra" ;;
-    //             10.14*) codename="macOS Mojave" ;;
-    //             10.15*) codename="macOS Catalina" ;;
-    //             10.16*) codename="macOS Big Sur" ;;
-    //             11.*)  codename="macOS Big Sur" ;;
-    //             12.*)  codename="macOS Monterey" ;;
-    //             *)      codename=macOS ;;
-    //         esac
-    
-    // TO-DO Figure out how to match starting substring
-    // if ver_num_
-    // }
+    format!("{} {}", friendly_name, ver_num)    
 }
