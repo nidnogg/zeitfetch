@@ -36,7 +36,7 @@ fn generate_info() {
 
     // Structure and output system information
 
-    let sys_info_col = [ 
+    let sys_info_col = [
         "\n".to_owned(),
         user_prompt,
         sys_name,

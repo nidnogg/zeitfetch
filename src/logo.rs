@@ -94,7 +94,7 @@ pub fn get_logo_by_distro(sys_name: &str) -> String {
 \x1b[94;1m   kMMMMMMMMMMMMMMMMMMMMMMd  
 \x1b[94;1m    ;KMMMMMMMWXXWMMMMMMMk.   
 \x1b[94;1m      .cooc,.    .,coo:.\x1b[0m     
-                "
+                ",
             );
             logo
         }

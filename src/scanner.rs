@@ -138,26 +138,15 @@ pub fn get_sys_name(sys: &System) -> String {
                 if let Some(kernel) = sys.kernel_version() {
                     let float_kernel = kernel.parse::<i32>().unwrap();
                     if float_kernel > 22000 {
-                        let final_sys_name = format!(
-                            "\x1b[93;1m{}\x1b[0m: {}",
-                            "OS",
-                            "Windows 11"
-                        );
-                        final_sys_name 
+                        let final_sys_name = format!("\x1b[93;1m{}\x1b[0m: {}", "OS", "Windows 11");
+                        final_sys_name
                     } else {
-                        let final_sys_name = format!(
-                            "\x1b[93;1m{}\x1b[0m: {}",
-                            "OS",
-                            "Windows 10"
-                        );
-                        final_sys_name 
+                        let final_sys_name = format!("\x1b[93;1m{}\x1b[0m: {}", "OS", "Windows 10");
+                        final_sys_name
                     }
                 } else {
-                    let final_sys_name = format!(
-                        "\x1b[93;1m{}\x1b[0m",
-                        "Windows"
-                    );
-                    final_sys_name 
+                    let final_sys_name = format!("\x1b[93;1m{}\x1b[0m", "Windows");
+                    final_sys_name
                 }
             } else {
                 if let Some(os_ver) = sys.os_version() {
@@ -344,12 +333,8 @@ pub fn get_gpu_name(sys: &System) -> String {
 
             let mut processed_gpu_no_newline = String::from(processed_gpu_name);
             processed_gpu_no_newline.pop();
-            let final_sys_name = format!(
-                "\x1b[93;1m{}\x1b[0m: {}",
-                "GPU",
-                processed_gpu_no_newline
-            );
-
+            let final_sys_name =
+                format!("\x1b[93;1m{}\x1b[0m: {}", "GPU", processed_gpu_no_newline);
 
             final_sys_name
         }
@@ -406,5 +391,5 @@ fn get_mac_friendly_name(untrimmed_ver_num: String) -> String {
         _ => "macOS",
     };
 
-    format!("{} {}", friendly_name, ver_num)    
+    format!("{} {}", friendly_name, ver_num)
 }
