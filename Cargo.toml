@@ -12,6 +12,6 @@ homepage = "https://github.com/nidnogg/zeitfetch"
 readme = "README.md"
 
 [dependencies]
-sysinfo = "0.24.7"
+sysinfo = "0.27.7"
 home = "0.5.3"
-prettytable-rs = "^0.9"
+prettytable-rs = "^0.10"
