@@ -345,7 +345,7 @@ pub fn get_gpu_name(sys: &System) -> String {
 
 pub fn get_mem_info(sys: &System) -> String {
     // RAM information (non swap):
-    const KB_TO_MIB: f64 = 0.00095367431640625;
+    const KB_TO_MIB: f64 = 0.00095367431640625 * 0.001;
     let total_memory = sys.total_memory() as f64 * KB_TO_MIB;
     let used_memory = sys.used_memory() as f64 * KB_TO_MIB;
     let mem_info = format!(

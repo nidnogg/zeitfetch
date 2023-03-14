@@ -1,6 +1,6 @@
 [package]
 name = "zeitfetch"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2021"
 authors = ["Henrique V (nidnogg)"]
 description = "Instantaneous snapshots of cross-platform system information"
@@ -12,6 +12,6 @@ homepage = "https://github.com/nidnogg/zeitfetch"
 readme = "README.md"
 
 [dependencies]
-sysinfo = "0.27.7"
+sysinfo = "0.28.2"
 home = "0.5.3"
 prettytable-rs = "^0.10"
