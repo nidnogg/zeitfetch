@@ -7,8 +7,8 @@ use sysinfo::{CpuExt, System, SystemExt};
 
 use crate::logo::*;
 
-pub fn get_logo(sys: &System) -> String {
-    if let Some(sys_name) = sys.name() {
+pub fn get_logo(sys: &System) -> Option<String> {
+    sys.name().map(|sys_name| {
         if sys_name.contains("Windows") {
             if let Some(kernel) = sys.kernel_version() {
                 let float_kernel = kernel.parse::<i32>().unwrap();
@@ -33,14 +33,12 @@ pub fn get_logo(sys: &System) -> String {
         } else {
             get_logo_by_distro("linux")
         }
-    } else {
-        String::from("")
-    }
+    })
 }
 
-pub fn get_user_prompt(sys: &System) -> String {
-    if let Some(os) = sys.name() {
-        if let Some(home_dir) = home::home_dir() {
+pub fn get_user_prompt(sys: &System) -> Option<String> {
+    match (sys.name(), home::home_dir(), sys.host_name()) {
+        (Some(os), Some(home_dir), Some(host_name)) => {
             let path = String::from(home_dir.to_string_lossy());
             let mut count = 0;
             for letter in path.chars().rev() {
@@ -49,124 +47,101 @@ pub fn get_user_prompt(sys: &System) -> String {
                 }
                 count += 1;
             }
-
             let start_user_index = path.len() - count;
             let username = &path[start_user_index..];
+            let user_prompt = format!(
+                "\x1b[93;1m{}\x1b[0m@\x1b[93;1m{}\x1b[0m",
+                username, host_name
+            );
+            // Extra 1 for @ character
+            let total_width = host_name.len() + username.len() + 1;
+            let linebreak = std::iter::repeat("-").take(total_width).collect::<String>();
+            let final_user_prompt = format!("{}\n{}", user_prompt, linebreak);
+            Some(final_user_prompt)
+        }
+        _ => None,
+    }
+}
 
-            if let Some(host_name) = sys.host_name() {
-                let user_prompt = format!(
-                    "\x1b[93;1m{}\x1b[0m@\x1b[93;1m{}\x1b[0m",
-                    username, host_name
-                );
-                // Extra 1 for @ character
-                let total_width = host_name.len() + username.len() + 1;
-                let linebreak = std::iter::repeat("-").take(total_width).collect::<String>();
-                let final_user_prompt = format!("{}\n{}", user_prompt, linebreak);
-                final_user_prompt
+pub fn get_kernel(sys: &System) -> Option<String> {
+    if let Some(value) = sys.kernel_version() {
+        Some(format!("\x1b[93;1m{}\x1b[0m: {}", "Kernel", value))
+    } else {
+        Some("\x1b[93;1mKernel\x1b[0m".into())
+    }
+}
+
+pub fn get_host_name(sys: &System) -> Option<String> {
+    sys.host_name()
+        .map(|value| format!("\x1b[93;1m{}\x1b[0m: {}", "Host", value))
+}
+
+pub fn get_sys_name(sys: &System) -> Option<String> {
+    sys.name().map(|sys_name| {
+        // Mac OS
+        if sys_name.contains("Darwin") {
+            let mut cmd_sw_vers = Command::new("sw_vers")
+                .stdout(Stdio::piped())
+                .spawn()
+                .unwrap();
+
+            let mut cmd_grep = Command::new("grep")
+                .arg("ProductVersion")
+                .stdin(Stdio::piped())
+                .stdout(Stdio::piped())
+                .spawn()
+                .unwrap();
+
+            if let Some(ref mut stdout) = cmd_sw_vers.stdout {
+                if let Some(ref mut stdin) = cmd_grep.stdin {
+                    let mut buf: Vec<u8> = Vec::new();
+                    stdout.read_to_end(&mut buf).unwrap();
+                    stdin.write_all(&buf).unwrap();
+                }
+            }
+            let res = cmd_grep.wait_with_output().unwrap().stdout;
+            let sys_friendly_num = &String::from_utf8(res).unwrap()[16..];
+            let sys_friendly_num_no_whitespace = &sys_friendly_num[..sys_friendly_num.len() - 1];
+
+            let final_sys_name = format!(
+                "\x1b[93;1m{}\x1b[0m: {}",
+                "OS",
+                get_mac_friendly_name(String::from(sys_friendly_num_no_whitespace))
+            );
+            final_sys_name
+
+        // Windows 11
+        } else if sys_name.contains("Windows") {
+            // let final_sys_name = format!("\x1b[93;1m{}\x1b[0m: {} 11", "OS", sys_name);
+            if let Some(kernel) = sys.kernel_version() {
+                let float_kernel = kernel.parse::<i32>().unwrap();
+                if float_kernel > 22000 {
+                    let final_sys_name = format!("\x1b[93;1m{}\x1b[0m: {}", "OS", "Windows 11");
+                    final_sys_name
+                } else {
+                    let final_sys_name = format!("\x1b[93;1m{}\x1b[0m: {}", "OS", "Windows 10");
+                    final_sys_name
+                }
             } else {
-                String::from("N/A")
+                let final_sys_name = format!("\x1b[93;1m{}\x1b[0m", "Windows");
+                final_sys_name
             }
         } else {
-            String::from("N/A")
-        }
-    } else {
-        String::from("N/A")
-    }
-}
-
-pub fn get_kernel(sys: &System) -> String {
-    if let Some(value) = sys.kernel_version() {
-        let kernel = format!("\x1b[93;1m{}\x1b[0m: {}", "Kernel", value);
-        kernel
-    } else {
-        let kernel = format!("\x1b[93;1m{}\x1b[0m: N/A", "Kernel");
-        kernel
-    }
-}
-
-pub fn get_host_name(sys: &System) -> String {
-    if let Some(value) = sys.host_name() {
-        let host_name = format!("\x1b[93;1m{}\x1b[0m: {}", "Host", value);
-        host_name
-    } else {
-        let host_name = String::from("N/A");
-        host_name
-    }
-}
-
-pub fn get_sys_name(sys: &System) -> String {
-    match sys.name() {
-        Some(value) => {
-            let sys_name = value;
-
-            // Mac OS
-            if sys_name.contains("Darwin") {
-                let mut cmd_sw_vers = Command::new("sw_vers")
-                    .stdout(Stdio::piped())
-                    .spawn()
-                    .unwrap();
-
-                let mut cmd_grep = Command::new("grep")
-                    .arg("ProductVersion")
-                    .stdin(Stdio::piped())
-                    .stdout(Stdio::piped())
-                    .spawn()
-                    .unwrap();
-
-                if let Some(ref mut stdout) = cmd_sw_vers.stdout {
-                    if let Some(ref mut stdin) = cmd_grep.stdin {
-                        let mut buf: Vec<u8> = Vec::new();
-                        stdout.read_to_end(&mut buf).unwrap();
-                        stdin.write_all(&buf).unwrap();
-                    }
-                }
-                let res = cmd_grep.wait_with_output().unwrap().stdout;
-                let sys_friendly_num = &String::from_utf8(res).unwrap()[16..];
-                let sys_friendly_num_no_whitespace =
-                    &sys_friendly_num[..sys_friendly_num.len() - 1];
-
-                let final_sys_name = format!(
-                    "\x1b[93;1m{}\x1b[0m: {}",
-                    "OS",
-                    get_mac_friendly_name(String::from(sys_friendly_num_no_whitespace))
-                );
+            if let Some(os_ver) = sys.os_version() {
+                let final_sys_name = format!("\x1b[93;1m{}\x1b[0m: {} {}", "OS", sys_name, os_ver);
                 final_sys_name
-
-            // Windows 11
-            } else if sys_name.contains("Windows") {
-                // let final_sys_name = format!("\x1b[93;1m{}\x1b[0m: {} 11", "OS", sys_name);
-                if let Some(kernel) = sys.kernel_version() {
-                    let float_kernel = kernel.parse::<i32>().unwrap();
-                    if float_kernel > 22000 {
-                        let final_sys_name = format!("\x1b[93;1m{}\x1b[0m: {}", "OS", "Windows 11");
-                        final_sys_name
-                    } else {
-                        let final_sys_name = format!("\x1b[93;1m{}\x1b[0m: {}", "OS", "Windows 10");
-                        final_sys_name
-                    }
-                } else {
-                    let final_sys_name = format!("\x1b[93;1m{}\x1b[0m", "Windows");
-                    final_sys_name
-                }
             } else {
-                if let Some(os_ver) = sys.os_version() {
-                    let final_sys_name =
-                        format!("\x1b[93;1m{}\x1b[0m: {} {}", "OS", sys_name, os_ver);
-                    final_sys_name
-                } else {
-                    let final_sys_name = format!("\x1b[93;1m{}\x1b[0m: {}", "OS", sys_name);
-                    final_sys_name
-                }
+                let final_sys_name = format!("\x1b[93;1m{}\x1b[0m: {}", "OS", sys_name);
+                final_sys_name
             }
         }
-        None => String::from("N/A"),
-    }
+    })
 }
 
-pub fn get_uptime(sys: &System) -> String {
+pub fn get_uptime(sys: &System) -> Option<String> {
     let mut uptime: f64 = sys.uptime() as f64;
     let days: f64 = uptime / (24.0 * 3600.0);
-    if days > 1.0 {
+    Some(if days > 1.0 {
         uptime = uptime % (24.0 * 3600.0);
         let hours: f64 = uptime / 3600.0;
         if hours > 1.0 {
@@ -242,19 +217,15 @@ pub fn get_uptime(sys: &System) -> String {
                 final_uptime
             }
         }
-    }
+    })
 }
 
-pub fn get_os_ver(sys: &System) -> String {
-    if let Some(os_ver) = sys.os_version() {
-        let final_os_ver = format!("\x1b[93;1m{}\x1b[0m: {}", "System OS version", os_ver);
-        final_os_ver
-    } else {
-        String::from("N/A")
-    }
+pub fn get_os_ver(sys: &System) -> Option<String> {
+    sys.os_version()
+        .map(|os_ver| format!("\x1b[93;1m{}\x1b[0m: {}", "System OS version", os_ver))
 }
 
-pub fn get_cpu_name(sys: &System) -> String {
+pub fn get_cpu_name(sys: &System) -> Option<String> {
     let cpu_brand = sys.cpus()[0].brand();
     let cpu_frequency: String;
     if cpu_brand.contains("Apple M") {
@@ -268,13 +239,12 @@ pub fn get_cpu_name(sys: &System) -> String {
         cpu_brand.trim(),
         cpu_frequency
     );
-    full_cpu_name
+    Some(full_cpu_name)
 }
 
-#[allow(dead_code)]
-pub fn get_gpu_name(sys: &System) -> String {
+pub fn get_gpu_name(sys: &System) -> Option<String> {
     // works on wsl, needs formatting and grep: lspci | grep -i --color 'vga\|3d\|2d'
-    if let Some(sys_name) = sys.name() {
+    sys.name().map(|sys_name| {
         // Windows
         if sys_name.contains("Windows") {
             let win_fetch_gpu = Command::new("wmic")
@@ -338,12 +308,10 @@ pub fn get_gpu_name(sys: &System) -> String {
 
             final_sys_name
         }
-    } else {
-        String::from("N/A")
-    }
+    })
 }
 
-pub fn get_mem_info(sys: &System) -> String {
+pub fn get_mem_info(sys: &System) -> Option<String> {
     // RAM information (non swap):
     const KB_TO_MIB: f64 = 0.00095367431640625 * 0.001;
     let total_memory = sys.total_memory() as f64 * KB_TO_MIB;
@@ -354,10 +322,10 @@ pub fn get_mem_info(sys: &System) -> String {
         used_memory.floor(),
         total_memory.floor()
     );
-    mem_info
+    Some(mem_info)
 }
 
-pub fn get_palette() -> String {
+pub fn get_palette() -> Option<String> {
     let palette = format!(
         "\n\
         \x1b[30m███\x1b[0m\x1b[31m███\x1b[0m\x1b[32m███\x1b[0m\x1b[33m███\x1b[0m\
@@ -366,7 +334,7 @@ pub fn get_palette() -> String {
         \x1b[94;1m███\x1b[0m\x1b[95;1m███\x1b[0m\x1b[96;1m███\x1b[0m\x1b[100;1m███\x1b[0m\
         "
     );
-    palette
+    Some(palette)
 }
 
 fn get_mac_friendly_name(untrimmed_ver_num: String) -> String {

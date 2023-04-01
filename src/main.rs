@@ -1,8 +1,6 @@
 use sysinfo::{System, SystemExt};
 
-use prettytable::format;
-use prettytable::row;
-use prettytable::Table;
+use prettytable::{format, row, Table};
 
 mod logo;
 mod scanner;
@@ -27,7 +25,11 @@ fn generate_info() {
     let uptime = scanner::get_uptime(&sys);
     let kernel = scanner::get_kernel(&sys);
     let os_ver = scanner::get_os_ver(&sys);
-    let cpu_num = format!("\x1b[93;1m{}\x1b[0m: {}", "NB CPUs", sys.cpus().len());
+    let cpu_num = Some(format!(
+        "\x1b[93;1m{}\x1b[0m: {}",
+        "NB CPUs",
+        sys.cpus().len()
+    ));
     let cpu_name = scanner::get_cpu_name(&sys);
     // let gpu_name = scanner::get_gpu_name(&sys);
     let mem_info = scanner::get_mem_info(&sys);
@@ -36,8 +38,8 @@ fn generate_info() {
 
     // Structure and output system information
 
-    let sys_info_col = [
-        "\n".to_owned(),
+    let sys_info_col = vec![
+        Some("\n".to_owned()),
         user_prompt,
         sys_name,
         host_name,
@@ -50,10 +52,13 @@ fn generate_info() {
         mem_info,
         palette,
     ]
+    .into_iter()
+    .filter_map(|x| x)
+    .collect::<Vec<String>>()
     .join("\n");
 
     let mut table = Table::new();
     table.set_format(*format::consts::FORMAT_CLEAN);
-    table.add_row(row![&logo, &sys_info_col]);
+    table.add_row(row![&logo.unwrap_or_else(|| "".into()), &sys_info_col]);
     table.printstd();
 }
