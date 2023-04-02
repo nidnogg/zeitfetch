@@ -1,4 +1,6 @@
 use home;
+use lazy_static::lazy_static;
+use regex::Regex;
 use std::io::{Read, Write};
 use std::process::Command;
 use std::process::Stdio;
@@ -6,6 +8,11 @@ use std::str;
 use sysinfo::{CpuExt, System, SystemExt};
 
 use crate::logo::*;
+
+lazy_static! {
+    static ref GPU_RE: Regex =
+        Regex::new(r#"^\S+? "(VGA|3D|Display).*?" ".*?" "(?P<gpu>.*?)""#).unwrap();
+}
 
 pub fn get_logo(sys: &System) -> Option<String> {
     sys.name().map(|sys_name| {
@@ -243,8 +250,8 @@ pub fn get_cpu_name(sys: &System) -> Option<String> {
 }
 
 pub fn get_gpu_name(sys: &System) -> Option<String> {
-    // works on wsl, needs formatting and grep: lspci | grep -i --color 'vga\|3d\|2d'
-    let gpu_name = sys.name().map(|sys_name| {
+    // works on wsl, needs formatting and search on linux
+    sys.name().and_then(|sys_name| {
         // Windows
         if sys_name.contains("Windows") {
             let win_fetch_gpu = Command::new("wmic")
@@ -261,46 +268,34 @@ pub fn get_gpu_name(sys: &System) -> Option<String> {
                 .take(0)
                 .chain(processed_gpu_name.chars().skip(4))
                 .collect();
-            let final_gpu_name = format!("\x1b[93;1m{}\x1b[0m: {}", "GPU", trimmed_gpu_name.trim());
-            Some(final_gpu_name)
-        // TO-DO MacOS for ARM and Intel x86 versions
+            Some(format!(
+                "\x1b[93;1m{}\x1b[0m: {}",
+                "GPU",
+                trimmed_gpu_name.trim()
+            ))
         // Linux
         } else {
-            // lspci | grep -i --color 'vga\|3d\|2d'
-            let mut cmd_lspci = Command::new("lspci")
+            let lspci = Command::new("lspci")
+                .args(["-mm"])
                 .stdout(Stdio::piped())
                 .spawn()
                 .ok()?;
-            let mut cmd_grep = Command::new("grep")
-                .args(["-i", "--color", "\'vga\\|3d\\|2d\'"])
-                .stdin(Stdio::piped())
-                .stdout(Stdio::piped())
-                .spawn()
-                .ok()?;
-            if let Some(ref mut stdout) = cmd_lspci.stdout {
-                if let Some(ref mut stdin) = cmd_grep.stdin {
-                    let mut buf: Vec<u8> = Vec::new();
-                    if let Err(_) = stdout.read_to_end(&mut buf) {
-                        return None;
-                    }
-                    if let Err(_) = stdin.write_all(&buf) {
-                        return None;
-                    }
-                }
-            }
-            let gpu_name_buf = cmd_grep.wait_with_output().ok()?.stdout;
-            let processed_gpu_name = match str::from_utf8(&gpu_name_buf) {
-                Ok(result) => result,
-                Err(_) => return None,
-            };
-            let mut processed_gpu_no_newline = String::from(processed_gpu_name);
-            processed_gpu_no_newline.pop();
-            let final_sys_name = format!("\x1b[93;1m{}\x1b[0m: {}", "GPU", processed_gpu_no_newline);
-            Some(final_sys_name)
-        }
-    });
 
-    gpu_name.flatten()
+            use std::io::{BufRead, BufReader};
+            let gpus = BufReader::new(lspci.stdout?).lines().flat_map(|l| {
+                l.ok().and_then(|l| {
+                    GPU_RE
+                        .captures(&l)
+                        .and_then(|c| c.name("gpu").map(|c| c.as_str().to_owned()))
+                })
+            });
+            Some(
+                gpus.map(|g| format!("\x1b[93;1m{}\x1b[0m: {}", "GPU", g))
+                    .collect::<Vec<_>>()
+                    .join("\n"),
+            )
+        }
+    })
 }
 
 pub fn get_mem_info(sys: &System) -> Option<String> {
