@@ -244,71 +244,63 @@ pub fn get_cpu_name(sys: &System) -> Option<String> {
 
 pub fn get_gpu_name(sys: &System) -> Option<String> {
     // works on wsl, needs formatting and grep: lspci | grep -i --color 'vga\|3d\|2d'
-    sys.name().map(|sys_name| {
+    let gpu_name = sys.name().map(|sys_name| {
         // Windows
         if sys_name.contains("Windows") {
             let win_fetch_gpu = Command::new("wmic")
                 .args(["path", "win32_VideoController", "get", "name"])
                 .output()
-                .expect("Failed to fetch Win32 GPU data");
-
+                .ok()?;
             let gpu_name_buf = win_fetch_gpu.stdout;
-            // wmic path win32_VideoController get name
-            // nf uses get caption
             let processed_gpu_name = match str::from_utf8(&gpu_name_buf) {
                 Ok(result) => result,
-                Err(e) => panic!("Failed to process Win32 GPU data: {:?}", e),
+                Err(_) => return None,
             };
-
             let trimmed_gpu_name: String = processed_gpu_name
                 .chars()
                 .take(0)
                 .chain(processed_gpu_name.chars().skip(4))
                 .collect();
-
             let final_gpu_name = format!("\x1b[93;1m{}\x1b[0m: {}", "GPU", trimmed_gpu_name.trim());
-            final_gpu_name
+            Some(final_gpu_name)
+        // TO-DO MacOS for ARM and Intel x86 versions
         // Linux
         } else {
             // lspci | grep -i --color 'vga\|3d\|2d'
             let mut cmd_lspci = Command::new("lspci")
                 .stdout(Stdio::piped())
                 .spawn()
-                .unwrap();
-
+                .ok()?;
             let mut cmd_grep = Command::new("grep")
                 .args(["-i", "--color", "\'vga\\|3d\\|2d\'"])
                 .stdin(Stdio::piped())
                 .stdout(Stdio::piped())
                 .spawn()
-                .unwrap();
-
+                .ok()?;
             if let Some(ref mut stdout) = cmd_lspci.stdout {
                 if let Some(ref mut stdin) = cmd_grep.stdin {
                     let mut buf: Vec<u8> = Vec::new();
-                    stdout.read_to_end(&mut buf).unwrap();
-                    stdin.write_all(&buf).unwrap();
+                    if let Err(_) = stdout.read_to_end(&mut buf) {
+                        return None;
+                    }
+                    if let Err(_) = stdin.write_all(&buf) {
+                        return None;
+                    }
                 }
             }
-
-            let gpu_name_buf = cmd_grep.wait_with_output().unwrap().stdout;
-
+            let gpu_name_buf = cmd_grep.wait_with_output().ok()?.stdout;
             let processed_gpu_name = match str::from_utf8(&gpu_name_buf) {
                 Ok(result) => result,
-                Err(e) => panic!("Failed to process Win32 GPU data: {:?}", e),
+                Err(_) => return None,
             };
-
-            // let sys_friendly_num = &String::from_utf8(res).unwrap()[16..];
-            // let sys_friendly_num_no_whitespace = &sys_friendly_num[..sys_friendly_num.len() - 1];
-
             let mut processed_gpu_no_newline = String::from(processed_gpu_name);
             processed_gpu_no_newline.pop();
-            let final_sys_name =
-                format!("\x1b[93;1m{}\x1b[0m: {}", "GPU", processed_gpu_no_newline);
-
-            final_sys_name
+            let final_sys_name = format!("\x1b[93;1m{}\x1b[0m: {}", "GPU", processed_gpu_no_newline);
+            Some(final_sys_name)
         }
-    })
+    });
+
+    gpu_name.flatten()
 }
 
 pub fn get_mem_info(sys: &System) -> Option<String> {
