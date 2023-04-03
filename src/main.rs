@@ -31,7 +31,7 @@ fn generate_info() {
         sys.cpus().len()
     ));
     let cpu_name = scanner::get_cpu_name(&sys);
-    // let gpu_name = scanner::get_gpu_name(&sys);
+    let gpu_name = scanner::get_gpu_name(&sys);
     let mem_info = scanner::get_mem_info(&sys);
     let palette = scanner::get_palette();
     let logo = scanner::get_logo(&sys);
@@ -48,7 +48,7 @@ fn generate_info() {
         os_ver,
         cpu_num,
         cpu_name,
-        // gpu_name,
+        gpu_name,
         mem_info,
         palette,
     ]
