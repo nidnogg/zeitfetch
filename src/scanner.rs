@@ -1,6 +1,7 @@
 use home;
 use lazy_static::lazy_static;
 use regex::Regex;
+use serde::{Deserialize, Serialize};
 use std::io::{Read, Write};
 use std::process::Command;
 use std::process::Stdio;
@@ -8,6 +9,17 @@ use std::str;
 use sysinfo::{CpuExt, System, SystemExt};
 
 use crate::logo::*;
+
+#[derive(Serialize, Deserialize, Debug)]
+struct SPDisplay {
+    sppci_model: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct SPDisplays {
+    #[serde(rename = "SPDisplaysDataType")]
+    sp_displays_data_type: Vec<SPDisplay>,
+}
 
 lazy_static! {
     static ref GPU_RE: Regex =
@@ -252,7 +264,6 @@ pub fn get_cpu_name(sys: &System) -> Option<String> {
 pub fn get_gpu_name(sys: &System) -> Option<String> {
     // works on wsl, needs formatting and search on linux
     sys.name().and_then(|sys_name| {
-        // Windows
         if sys_name.contains("Windows") {
             let win_fetch_gpu = Command::new("wmic")
                 .args(["path", "win32_VideoController", "get", "name"])
@@ -273,8 +284,25 @@ pub fn get_gpu_name(sys: &System) -> Option<String> {
                 "GPU",
                 trimmed_gpu_name.trim()
             ))
-        // Linux
+        } else if sys_name.contains("Darwin") || sys_name.contains("Mac") {
+            let cmd = Command::new("system_profiler")
+                .args(["-json", "SPDisplaysDataType"])
+                .stdout(Stdio::piped())
+                .spawn()
+                .ok()?;
+            use std::io::BufReader;
+            let reader = BufReader::new(cmd.stdout?);
+            let displays: SPDisplays = serde_json::from_reader(reader).ok()?;
+            Some(
+                displays
+                    .sp_displays_data_type
+                    .iter()
+                    .map(|d| format!("\x1b[93;1m{}\x1b[0m: {}", "GPU", d.sppci_model))
+                    .collect::<Vec<_>>()
+                    .join("\n"),
+            )
         } else {
+            // Linux
             let lspci = Command::new("lspci")
                 .args(["-mm"])
                 .stdout(Stdio::piped())
