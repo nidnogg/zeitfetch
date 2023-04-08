@@ -376,3 +376,21 @@ fn get_mac_friendly_name(untrimmed_ver_num: String) -> String {
 
     format!("{} {}", friendly_name, ver_num)
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn gpu_regex_empty() {
+        use crate::scanner::GPU_RE;
+        let cap = GPU_RE.captures("");
+        assert!(cap.is_none());
+    }
+
+    #[test]
+    fn gpu_regex_nvidia() {
+        use crate::scanner::GPU_RE;
+        let cap = GPU_RE.captures(r#"01:00.0 "3D controller" "NVIDIA Corporation" "GA107M [GeForce RTX 3050 Ti Mobile]" -ra1 -p00 "Dell" "Device 0b19""#);
+        let gpu = cap.and_then(|c| c.name("gpu").map(|m| m.as_str()));
+        assert_eq!(gpu, Some("GA107M [GeForce RTX 3050 Ti Mobile]"));
+    }
+}
