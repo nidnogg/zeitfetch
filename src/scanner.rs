@@ -387,6 +387,13 @@ mod tests {
     }
 
     #[test]
+    fn gpu_regex_not_gpu() {
+        use crate::scanner::GPU_RE;
+        let cap = GPU_RE.captures(r#"00:00.0 "Host bridge" "Intel Corporation" "12th Gen Core Processor Host Bridge/DRAM Registers" -r02 -p00 "Dell" "Device 0b19""#);
+        assert!(cap.is_none());
+    }
+
+    #[test]
     fn gpu_regex_nvidia() {
         use crate::scanner::GPU_RE;
         let cap = GPU_RE.captures(r#"01:00.0 "3D controller" "NVIDIA Corporation" "GA107M [GeForce RTX 3050 Ti Mobile]" -ra1 -p00 "Dell" "Device 0b19""#);
