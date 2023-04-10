@@ -53,7 +53,7 @@ fn generate_info() {
         palette,
     ]
     .into_iter()
-    .filter_map(|x| x)
+    .flatten()
     .collect::<Vec<String>>()
     .join("\n");
 

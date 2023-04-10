@@ -1,4 +1,3 @@
-use home;
 use lazy_static::lazy_static;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
@@ -76,7 +75,7 @@ pub fn get_user_prompt(sys: &System) -> Option<String> {
             );
             // Extra 1 for @ character
             let total_width = host_name.len() + username.len() + 1;
-            let linebreak = std::iter::repeat("-").take(total_width).collect::<String>();
+            let linebreak = "-".repeat(total_width);
             let final_user_prompt = format!("{}\n{}", user_prompt, linebreak);
             Some(final_user_prompt)
         }
@@ -148,12 +147,16 @@ pub fn get_sys_name(sys: &System) -> Option<String> {
                 final_sys_name
             }
         } else {
-            if let Some(os_ver) = sys.os_version() {
-                let final_sys_name = format!("\x1b[93;1m{}\x1b[0m: {} {}", "OS", sys_name, os_ver);
-                final_sys_name
-            } else {
-                let final_sys_name = format!("\x1b[93;1m{}\x1b[0m: {}", "OS", sys_name);
-                final_sys_name
+            match sys.os_version() {
+                Some(os_ver) => {
+                    let final_sys_name =
+                        format!("\x1b[93;1m{}\x1b[0m: {} {}", "OS", sys_name, os_ver);
+                    final_sys_name
+                }
+                None => {
+                    let final_sys_name = format!("\x1b[93;1m{}\x1b[0m: {}", "OS", sys_name);
+                    final_sys_name
+                }
             }
         }
     })
@@ -163,10 +166,10 @@ pub fn get_uptime(sys: &System) -> Option<String> {
     let mut uptime: f64 = sys.uptime() as f64;
     let days: f64 = uptime / (24.0 * 3600.0);
     Some(if days > 1.0 {
-        uptime = uptime % (24.0 * 3600.0);
+        uptime %= 24.0 * 3600.0;
         let hours: f64 = uptime / 3600.0;
         if hours > 1.0 {
-            uptime = uptime % 3600.0;
+            uptime %= 3600.0;
             let minutes: f64 = uptime / 60.0;
             if minutes >= 1.0 {
                 let final_uptime = format!(
@@ -205,7 +208,7 @@ pub fn get_uptime(sys: &System) -> Option<String> {
     } else {
         let hours: f64 = uptime / 3600.0;
         if hours > 1.0 {
-            uptime = uptime % 3600.0;
+            uptime %= 3600.0;
             let minutes: f64 = uptime / 60.0;
             if minutes >= 1.0 {
                 let final_uptime = format!(
@@ -248,12 +251,11 @@ pub fn get_os_ver(sys: &System) -> Option<String> {
 
 pub fn get_cpu_name(sys: &System) -> Option<String> {
     let cpu_brand = sys.cpus()[0].brand();
-    let cpu_frequency: String;
-    if cpu_brand.contains("Apple M") {
-        cpu_frequency = format!("")
+    let cpu_frequency = if cpu_brand.contains("Apple M") {
+        String::from("")
     } else {
-        cpu_frequency = format!("@ {} GHz", sys.cpus()[0].frequency());
-    }
+        format!("@ {} GHz", sys.cpus()[0].frequency())
+    };
     let full_cpu_name = format!(
         "\x1b[93;1m{}\x1b[0m: {} {}",
         "CPU",
@@ -301,11 +303,13 @@ pub fn get_gpu_name(sys: &System) -> Option<String> {
 
         match gpus.as_slice() {
             [gpu] => Some(format!("\x1b[93;1m{}\x1b[0m: {}", "GPU", gpu)),
-            gpus => Some(gpus.iter()
-                .enumerate()
-                .map(|(i, gpu)| format!("\x1b[93;1m{} #{}\x1b[0m: {}", "GPU", i+1, gpu))
-                .collect::<Vec<_>>()
-                .join("\n"))
+            gpus => Some(
+                gpus.iter()
+                    .enumerate()
+                    .map(|(i, gpu)| format!("\x1b[93;1m{} #{}\x1b[0m: {}", "GPU", i + 1, gpu))
+                    .collect::<Vec<_>>()
+                    .join("\n"),
+            ),
         }
     })
 }
@@ -351,14 +355,13 @@ pub fn get_mem_info(sys: &System) -> Option<String> {
 }
 
 pub fn get_palette() -> Option<String> {
-    let palette = format!(
-        "\n\
+    let palette = "\n\
         \x1b[30m███\x1b[0m\x1b[31m███\x1b[0m\x1b[32m███\x1b[0m\x1b[33m███\x1b[0m\
         \x1b[34m███\x1b[0m\x1b[35m███\x1b[0m\x1b[36m███\x1b[0m\x1b[90;1m███\x1b[0m\n\
         \x1b[90;1m███\x1b[0m\x1b[91;1m███\x1b[0m\x1b[92;1m███\x1b[0m\x1b[93;1m███\x1b[0m\
         \x1b[94;1m███\x1b[0m\x1b[95;1m███\x1b[0m\x1b[96;1m███\x1b[0m\x1b[100;1m███\x1b[0m\
         "
-    );
+    .to_string();
     Some(palette)
 }
 

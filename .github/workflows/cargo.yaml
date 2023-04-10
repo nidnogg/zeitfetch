@@ -51,5 +51,4 @@ jobs:
       - name: Install Clippy
         run: rustup component add clippy
       - name: Cargo Clippy
-        # TODO: fix warnings and enable
-        run: cargo clippy # -- -D warnings
+        run: cargo clippy -- -D warnings
