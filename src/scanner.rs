@@ -266,7 +266,7 @@ pub fn get_cpu_name(sys: &System) -> Option<String> {
 pub fn get_gpu_name(sys: &System) -> Option<String> {
     // works on wsl, needs formatting and search on linux
     sys.name().and_then(|sys_name| {
-        if sys_name.contains("Windows") {
+        let gpus = if sys_name.contains("Windows") {
             let win_fetch_gpu = Command::new("wmic")
                 .args(["path", "win32_VideoController", "get", "name"])
                 .output()
@@ -281,11 +281,7 @@ pub fn get_gpu_name(sys: &System) -> Option<String> {
                 .take(0)
                 .chain(processed_gpu_name.chars().skip(4))
                 .collect();
-            Some(format!(
-                "\x1b[93;1m{}\x1b[0m: {}",
-                "GPU",
-                trimmed_gpu_name.trim()
-            ))
+            vec![trimmed_gpu_name.trim().into()]
         } else if sys_name.contains("Darwin") || sys_name.contains("Mac") {
             let cmd = Command::new("system_profiler")
                 .args(["-json", "SPDisplaysDataType"])
@@ -300,34 +296,41 @@ pub fn get_gpu_name(sys: &System) -> Option<String> {
                 .stdout(Stdio::piped())
                 .spawn()
                 .ok()?;
-
-            use std::io::{BufRead, BufReader};
-            let gpus = BufReader::new(lspci.stdout?).lines().flat_map(|l| {
-                l.ok().and_then(|l| {
-                    GPU_RE
-                        .captures(&l)
-                        .and_then(|c| c.name("gpu").map(|c| c.as_str().to_owned()))
-                })
-            });
-            Some(
-                gpus.map(|g| format!("\x1b[93;1m{}\x1b[0m: {}", "GPU", g))
-                    .collect::<Vec<_>>()
-                    .join("\n"),
-            )
-        }
+            parse_lspci_mm_output(lspci.stdout?)
+        };
+        Some(
+            gpus.iter()
+                .map(|g| format!("\x1b[93;1m{}\x1b[0m: {}", "GPU", g))
+                .collect::<Vec<_>>()
+                .join("\n"),
+        )
     })
 }
 
-fn parse_system_profiler_json_output(reader: impl Read) -> Option<String> {
-    let displays: SPDisplaysDataTypeOutput = serde_json::from_reader(reader).ok()?;
-    Some(
-        displays
-            .sp_displays_data_type
-            .iter()
-            .map(|d| format!("\x1b[93;1m{}\x1b[0m: {}", "GPU", d.sppci_model))
-            .collect::<Vec<_>>()
-            .join("\n"),
-    )
+fn parse_lspci_mm_output(reader: impl Read) -> Vec<String> {
+    use std::io::{BufRead, BufReader};
+    BufReader::new(reader)
+        .lines()
+        .flat_map(|l| {
+            l.ok().and_then(|l| {
+                GPU_RE
+                    .captures(&l)
+                    .and_then(|c| c.name("gpu").map(|c| c.as_str().to_owned()))
+            })
+        })
+        .collect()
+}
+
+fn parse_system_profiler_json_output(reader: impl Read) -> Vec<String> {
+    let displays: SPDisplaysDataTypeOutput = match serde_json::from_reader(reader) {
+        Ok(o) => o,
+        Err(_) => return vec![],
+    };
+    displays
+        .sp_displays_data_type
+        .iter()
+        .map(|d| d.sppci_model.to_owned())
+        .collect::<Vec<_>>()
 }
 
 pub fn get_mem_info(sys: &System) -> Option<String> {
