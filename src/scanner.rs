@@ -407,4 +407,87 @@ mod tests {
         let gpu = cap.and_then(|c| c.name("gpu").map(|m| m.as_str()));
         assert_eq!(gpu, Some("GA107M [GeForce RTX 3050 Ti Mobile]"));
     }
+
+    #[test]
+    fn parse_lspci_mm_output() {
+        let input = r#"00:00.0 "Host bridge" "Intel Corporation" "12th Gen Core Processor Host Bridge/DRAM Registers" -r02 -p00 "Dell" "Device 0b19"
+00:01.0 "PCI bridge" "Intel Corporation" "12th Gen Core Processor PCI Express x16 Controller #1" -r02 -p00 "Dell" "Device 0b19"
+00:02.0 "VGA compatible controller" "Intel Corporation" "Alder Lake-P Integrated Graphics Controller" -r0c -p00 "Dell" "Device 0b19"
+00:04.0 "Signal processing controller" "Intel Corporation" "Alder Lake Innovation Platform Framework Processor Participant" -r02 -p00 "Dell" "Device 0b19"
+00:06.0 "PCI bridge" "Intel Corporation" "12th Gen Core Processor PCI Express x4 Controller #0" -r02 -p00 "Dell" "Device 0b19"
+00:07.0 "PCI bridge" "Intel Corporation" "Alder Lake-P Thunderbolt 4 PCI Express Root Port #0" -r02 -p00 "Dell" "Device 0b19"
+00:07.1 "PCI bridge" "Intel Corporation" "Alder Lake-P Thunderbolt 4 PCI Express Root Port #1" -r02 -p00 "Dell" "Device 0b19"
+00:08.0 "System peripheral" "Intel Corporation" "12th Gen Core Processor Gaussian & Neural Accelerator" -r02 -p00 "Dell" "Device 0b19"
+00:0d.0 "USB controller" "Intel Corporation" "Alder Lake-P Thunderbolt 4 USB Controller" -r02 -p30 "Dell" "Device 0b19"
+00:0d.2 "USB controller" "Intel Corporation" "Alder Lake-P Thunderbolt 4 NHI #0" -r02 -p40 "Dell" "Device 0b19"
+00:12.0 "Serial controller" "Intel Corporation" "Alder Lake-P Integrated Sensor Hub" -r01 -p00 "Dell" "Device 0b19"
+00:14.0 "USB controller" "Intel Corporation" "Alder Lake PCH USB 3.2 xHCI Host Controller" -r01 -p30 "Dell" "Device 0b19"
+00:14.2 "RAM memory" "Intel Corporation" "Alder Lake PCH Shared SRAM" -r01 -p00 "Dell" "Device 0b19"
+00:14.3 "Network controller" "Intel Corporation" "Alder Lake-P PCH CNVi WiFi" -r01 -p00 "Intel Corporation" "Wi-Fi 6E AX211 160MHz"
+00:15.0 "Serial bus controller" "Intel Corporation" "Alder Lake PCH Serial IO I2C Controller #0" -r01 -p00 "Dell" "Device 0b19"
+00:15.1 "Serial bus controller" "Intel Corporation" "Alder Lake PCH Serial IO I2C Controller #1" -r01 -p00 "Dell" "Device 0b19"
+00:16.0 "Communication controller" "Intel Corporation" "Alder Lake PCH HECI Controller" -r01 -p00 "Dell" "Device 0b19"
+00:1c.0 "PCI bridge" "Intel Corporation" "Device 51bb" -r01 -p00 "Dell" "Device 0b19"
+00:1f.0 "ISA bridge" "Intel Corporation" "Alder Lake PCH eSPI Controller" -r01 -p00 "Dell" "Device 0b19"
+00:1f.3 "Audio device" "Intel Corporation" "Alder Lake PCH-P High Definition Audio Controller" -r01 -p80 "Dell" "Device 0b19"
+00:1f.4 "SMBus" "Intel Corporation" "Alder Lake PCH-P SMBus Host Controller" -r01 -p00 "Dell" "Device 0b19"
+00:1f.5 "Serial bus controller" "Intel Corporation" "Alder Lake-P PCH SPI Controller" -r01 -p00 "Dell" "Device 0b19"
+01:00.0 "3D controller" "NVIDIA Corporation" "GA107M [GeForce RTX 3050 Ti Mobile]" -ra1 -p00 "Dell" "Device 0b19"
+02:00.0 "Non-Volatile memory controller" "Samsung Electronics Co Ltd" "NVMe SSD Controller PM9A1/PM9A3/980PRO" -p02 "Samsung Electronics Co Ltd" "Device a801"
+54:00.0 "PCI bridge" "Intel Corporation" "JHL7540 Thunderbolt 3 Bridge [Titan Ridge DD 2018]" -r06 -p00 "Intel Corporation" "Device 0000"
+55:02.0 "PCI bridge" "Intel Corporation" "JHL7540 Thunderbolt 3 Bridge [Titan Ridge DD 2018]" -r06 -p00 "Intel Corporation" "Device 0000"
+55:04.0 "PCI bridge" "Intel Corporation" "JHL7540 Thunderbolt 3 Bridge [Titan Ridge DD 2018]" -r06 -p00 "Intel Corporation" "Device 0000"
+56:00.0 "USB controller" "Intel Corporation" "JHL7540 Thunderbolt 3 USB Controller [Titan Ridge DD 2018]" -r06 -p30 "Intel Corporation" "Device 0000"
+a5:00.0 "Unassigned class [ff00]" "Realtek Semiconductor Co., Ltd." "RTS5260 PCI Express Card Reader" -r01 -p00 "Dell" "Device 0b19"
+"#;
+        assert_eq!(
+            super::parse_lspci_mm_output(input.as_bytes()),
+            vec![
+                "Alder Lake-P Integrated Graphics Controller",
+                "GA107M [GeForce RTX 3050 Ti Mobile]"
+            ]
+        );
+    }
+
+    #[test]
+    fn parse_system_profiler_json_output() {
+        let input = r#"{
+  "SPDisplaysDataType" : [
+    {
+      "_name" : "kHW_AppleM1Item",
+      "spdisplays_mtlgpufamilysupport" : "spdisplays_metal3",
+      "spdisplays_ndrvs" : [
+        {
+          "_name" : "Color LCD",
+          "_spdisplays_display-product-id" : "a047",
+          "_spdisplays_display-serial-number" : "---redacted---",
+          "_spdisplays_display-vendor-id" : "610",
+          "_spdisplays_display-week" : "0",
+          "_spdisplays_display-year" : "0",
+          "_spdisplays_displayID" : "1",
+          "_spdisplays_pixels" : "2880 x 1800",
+          "_spdisplays_resolution" : "1440 x 900 @ 60.00Hz",
+          "spdisplays_ambient_brightness" : "spdisplays_yes",
+          "spdisplays_connection_type" : "spdisplays_internal",
+          "spdisplays_display_type" : "spdisplays_built-in_retinaLCD",
+          "spdisplays_main" : "spdisplays_yes",
+          "spdisplays_mirror" : "spdisplays_off",
+          "spdisplays_online" : "spdisplays_yes",
+          "spdisplays_pixelresolution" : "spdisplays_2560x1600Retina"
+        }
+      ],
+      "spdisplays_vendor" : "sppci_vendor_Apple",
+      "sppci_bus" : "spdisplays_builtin",
+      "sppci_cores" : "7",
+      "sppci_device_type" : "spdisplays_gpu",
+      "sppci_model" : "Apple M1"
+    }
+  ]
+}
+"#;
+        assert_eq!(
+            super::parse_system_profiler_json_output(input.as_bytes()),
+            vec!["Apple M1"],
+        );
+    }
 }
