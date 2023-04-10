@@ -298,12 +298,15 @@ pub fn get_gpu_name(sys: &System) -> Option<String> {
                 .ok()?;
             parse_lspci_mm_output(lspci.stdout?)
         };
-        Some(
-            gpus.iter()
-                .map(|g| format!("\x1b[93;1m{}\x1b[0m: {}", "GPU", g))
+
+        match gpus.as_slice() {
+            [gpu] => Some(format!("\x1b[93;1m{}\x1b[0m: {}", "GPU", gpu)),
+            gpus => Some(gpus.iter()
+                .enumerate()
+                .map(|(i, gpu)| format!("\x1b[93;1m{} #{}\x1b[0m: {}", "GPU", i+1, gpu))
                 .collect::<Vec<_>>()
-                .join("\n"),
-        )
+                .join("\n"))
+        }
     })
 }
 
@@ -311,11 +314,11 @@ fn parse_lspci_mm_output(reader: impl Read) -> Vec<String> {
     use std::io::{BufRead, BufReader};
     BufReader::new(reader)
         .lines()
-        .flat_map(|l| {
-            l.ok().and_then(|l| {
+        .flat_map(|line| {
+            line.ok().and_then(|line| {
                 GPU_RE
-                    .captures(&l)
-                    .and_then(|c| c.name("gpu").map(|c| c.as_str().to_owned()))
+                    .captures(&line)
+                    .and_then(|cap| cap.name("gpu").map(|cap| cap.as_str().to_owned()))
             })
         })
         .collect()
