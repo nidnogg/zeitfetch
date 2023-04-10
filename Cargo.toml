@@ -12,6 +12,10 @@ homepage = "https://github.com/nidnogg/zeitfetch"
 readme = "README.md"
 
 [dependencies]
-sysinfo = "0.28.2"
 home = "0.5.3"
+lazy_static = "1.4.0"
 prettytable-rs = "^0.10"
+regex = "1.7.3"
+serde = { version = "1.0.159", features = ["derive"] }
+serde_json = "1.0.95"
+sysinfo = "0.28.2"

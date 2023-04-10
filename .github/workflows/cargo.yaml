@@ -1,0 +1,55 @@
+on: [push, pull_request]
+
+name: Continuous integration
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Rust (Stable)
+        run: |
+          curl -sSL https://sh.rustup.rs | sh -s -- -y
+          rustup default stable
+      - name: Cargo Check
+        run: cargo check
+
+  test:
+    name: Test Suite
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Rust (Stable)
+        run: |
+          curl -sSL https://sh.rustup.rs | sh -s -- -y
+          rustup default stable
+      - name: Cargo Test
+        run: cargo test
+
+  fmt:
+    name: Rustfmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Rust (Stable)
+        run: |
+          curl -sSL https://sh.rustup.rs | sh -s -- -y
+          rustup default stable
+      - name: Cargo Fmt
+        run: cargo fmt --all -- --check
+
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Rust (Stable)
+        run: |
+          curl -sSL https://sh.rustup.rs | sh -s -- -y
+          rustup default stable
+      - name: Install Clippy
+        run: rustup component add clippy
+      - name: Cargo Clippy
+        # TODO: fix warnings and enable
+        run: cargo clippy # -- -D warnings
