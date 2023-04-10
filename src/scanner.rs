@@ -18,7 +18,7 @@ struct SPDisplay {
 
 /// Output of macOS's `system_profiler SPDisplayDataType` command
 #[derive(Serialize, Deserialize, Debug)]
-struct SPDisplays {
+struct SPDisplaysDataTypeOutput {
     #[serde(rename = "SPDisplaysDataType")]
     sp_displays_data_type: Vec<SPDisplay>,
 }
@@ -292,17 +292,7 @@ pub fn get_gpu_name(sys: &System) -> Option<String> {
                 .stdout(Stdio::piped())
                 .spawn()
                 .ok()?;
-            use std::io::BufReader;
-            let reader = BufReader::new(cmd.stdout?);
-            let displays: SPDisplays = serde_json::from_reader(reader).ok()?;
-            Some(
-                displays
-                    .sp_displays_data_type
-                    .iter()
-                    .map(|d| format!("\x1b[93;1m{}\x1b[0m: {}", "GPU", d.sppci_model))
-                    .collect::<Vec<_>>()
-                    .join("\n"),
-            )
+            parse_system_profiler_json_output(std::io::BufReader::new(cmd.stdout?))
         } else {
             // Linux
             let lspci = Command::new("lspci")
@@ -326,6 +316,18 @@ pub fn get_gpu_name(sys: &System) -> Option<String> {
             )
         }
     })
+}
+
+fn parse_system_profiler_json_output(reader: impl Read) -> Option<String> {
+    let displays: SPDisplaysDataTypeOutput = serde_json::from_reader(reader).ok()?;
+    Some(
+        displays
+            .sp_displays_data_type
+            .iter()
+            .map(|d| format!("\x1b[93;1m{}\x1b[0m: {}", "GPU", d.sppci_model))
+            .collect::<Vec<_>>()
+            .join("\n"),
+    )
 }
 
 pub fn get_mem_info(sys: &System) -> Option<String> {
