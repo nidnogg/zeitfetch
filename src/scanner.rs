@@ -10,11 +10,13 @@ use sysinfo::{CpuExt, System, SystemExt};
 
 use crate::logo::*;
 
+/// Data for a single display from the `system_profiler` command
 #[derive(Serialize, Deserialize, Debug)]
 struct SPDisplay {
     sppci_model: String,
 }
 
+/// Output of macOS's `system_profiler SPDisplayDataType` command
 #[derive(Serialize, Deserialize, Debug)]
 struct SPDisplays {
     #[serde(rename = "SPDisplaysDataType")]
