@@ -7,7 +7,7 @@ use std::process::Stdio;
 use std::str;
 use sysinfo::{CpuExt, System, SystemExt};
 
-use crate::logo::*;
+use crate::{logo::*, Ctx};
 
 /// Data for a single display from the `system_profiler` command
 #[derive(Serialize, Deserialize, Debug)]
@@ -58,7 +58,7 @@ pub fn get_logo(sys: &System) -> Option<String> {
     })
 }
 
-pub fn get_user_prompt(sys: &System) -> Option<String> {
+pub fn get_user_prompt(sys: &System, ctx: &Ctx) -> Option<String> {
     match (sys.name(), home::home_dir(), sys.host_name()) {
         (Some(os), Some(home_dir), Some(host_name)) => {
             let path = String::from(home_dir.to_string_lossy());
@@ -78,7 +78,14 @@ pub fn get_user_prompt(sys: &System) -> Option<String> {
             // Extra 1 for @ character
             let total_width = host_name.len() + username.len() + 1;
             let linebreak = "-".repeat(total_width);
-            let final_user_prompt = format!("{}\n{}", user_prompt, linebreak);
+
+            // Used solely in --minimal logo + user prompt output
+            let final_user_prompt = if !ctx.args.minimal {
+                format!("{}\n{}", user_prompt, linebreak)
+            } else {
+                // TO-DO optimize this based on logo width (store in ctx) to properly center. currently optimized for debian, macOS
+                format!("    {}\n    {}", linebreak, user_prompt)
+            };
             Some(final_user_prompt)
         }
         _ => None,
