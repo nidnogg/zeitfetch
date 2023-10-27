@@ -7,7 +7,8 @@ use std::process::Stdio;
 use std::str;
 use sysinfo::{CpuExt, System, SystemExt};
 
-use crate::{logo::*, Ctx};
+use crate::cli::Ctx;
+use crate::logo::*;
 
 /// Data for a single display from the `system_profiler` command
 #[derive(Serialize, Deserialize, Debug)]

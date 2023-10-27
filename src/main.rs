@@ -1,88 +1,17 @@
-use std::{env, process::exit};
-
 use sysinfo::{System, SystemExt};
 
 use prettytable::{format, row, Table};
 
+mod cli;
 mod logo;
 mod scanner;
-pub struct Ctx {
-    args: Args,
-}
-
-#[derive(Debug, Default)]
-pub struct Args {
-    no_logo: bool,
-    logo_only: bool,
-    minimal: bool,
-    exclusive_args: i32,
-}
-
-impl Ctx {
-    fn new() -> Self {
-        let args = Args::parse_args();
-        Ctx { args }
-    }
-}
-
-impl Args {
-    fn parse_args() -> Self {
-        let mut args = Args::default();
-        let arg_vec: Vec<String> = env::args().collect();
-
-        if arg_vec.contains(&String::from("--help")) || arg_vec.contains(&String::from("--h")) {
-            let help_text = "zeitfetch\n\
-            Usage:\n\
-            zeitfetch [options]\n\
-            \n\
-            Options:\n\
-            -h, --help      Show this help message\n\
-            -v, --version   Show the version number\n\
-            --no-logo    Display only system information\n\
-            --logo-only  Display only distro logo\n\
-            --minimal    Display logo and user prompt, vertically\n";
-            println!("{}", help_text);
-            exit(0);
-        }
-
-        if arg_vec.contains(&String::from("--version")) || arg_vec.contains(&String::from("--v")) {
-            let version_text = env!("CARGO_PKG_VERSION");
-            println!("zeitfetch v{}", version_text);
-            exit(0);
-        }
-
-        env!("CARGO_PKG_VERSION");
-
-        if arg_vec.contains(&String::from("--no-logo")) {
-            args.no_logo = true;
-            args.exclusive_args += 1;
-        }
-
-        if arg_vec.contains(&String::from("--logo-only")) {
-            args.logo_only = true;
-            args.exclusive_args += 1;
-        }
-
-        if arg_vec.contains(&String::from("--minimal")) {
-            args.minimal = true;
-            args.exclusive_args += 1;
-        }
-
-        if args.exclusive_args > 1 {
-            println!("Please include only one of the following arguments:\n--no-logo, --logo-only, --minimal");
-            exit(1);
-        }
-
-        args
-    }
-}
 
 fn main() {
-    let ctx = Ctx::new();
+    let ctx = cli::Ctx::new();
     generate_info(ctx);
 }
 
-fn generate_info(ctx: Ctx) {
+fn generate_info(ctx: cli::Ctx) {
     // "new_all" used to ensure that all list of
     // components, network interfaces, disks and users are already
     // filled

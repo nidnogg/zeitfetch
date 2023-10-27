@@ -24,6 +24,13 @@ If your Linux distribution is not listed/not being actively tested on, most like
 
 Fully cross platform compatible with Windows, macOS, and most Linux distros.
 
+Customizable output. Choose between:
+- full info + logo (default, similar to neofetch)
+- no-logo
+- logo-only
+- minimal
+- custom logo (coming soon)
+
 ## Installation
 
 ### Using Cargo
@@ -39,6 +46,26 @@ On macOS, *zeitfetch* can also be installed via **brew**:
 ```bash
 brew tap nidnogg/zeitfetch
 brew install zeitfetch
+```
+
+## Usage 
+Just run: 
+```bash
+zeitfetch
+``` 
+
+If you want to customize the output a bit, some options are listed below:
+```bash
+zeitfetch --no-logo     # omits logo
+zeitfetch --logo-only   # omits sys info text
+zeitfetch --minimal     # display logo + user prompt vertically
+```
+
+If you're unsure of what to use, run: 
+```bash
+zeitfetch --help 
+# alternatively, 
+zeitfetch -h
 ```
 ## Note for running on terminal boot
 
@@ -60,6 +87,7 @@ cargo fmt --all --
 
 # For linting
 cargo clippy
+
 ```
 
 To run the development environment, make sure you have both **Rust** and **Cargo** installed.
