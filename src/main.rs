@@ -39,6 +39,12 @@ fn generate_info(ctx: cli::Ctx) {
     let palette_lines = palette.as_slice().iter();
 
     let logo = scanner::get_logo(&sys);
+    let logo_col = logo.unwrap_or_else(|| "".into());
+    let logo_width = logo_col.lines().map(|s| ansi::len(s)).max().unwrap_or(0);
+    let term_width = termsize::get().map(|w| w.cols).unwrap_or(80);
+    let info_width = usize::from(term_width)
+        .saturating_sub(logo_width)
+        .saturating_sub(4); // includes width of column border plus 1 extra
 
     // Structure and output system information
     let sys_info_col = if !ctx.args.minimal {
@@ -58,7 +64,7 @@ fn generate_info(ctx: cli::Ctx) {
         .iter()
         .flatten()
         .chain(palette_lines)
-        .map(|s| ansi::truncate(&s, 80))
+        .map(|s| ansi::truncate(&s, info_width))
         .collect::<Vec<String>>()
         .join("\n")
     } else {
@@ -68,8 +74,6 @@ fn generate_info(ctx: cli::Ctx) {
             .collect::<Vec<String>>()
             .join("\n")
     };
-
-    let logo_col = logo.unwrap_or_else(|| "".into());
 
     let mut table = Table::new();
     table.set_format(*format::consts::FORMAT_CLEAN);
