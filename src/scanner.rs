@@ -364,15 +364,17 @@ pub fn get_mem_info(sys: &System) -> Option<String> {
     Some(mem_info)
 }
 
-pub fn get_palette() -> Option<String> {
-    let palette = "\n\
-        \x1b[30m███\x1b[0m\x1b[31m███\x1b[0m\x1b[32m███\x1b[0m\x1b[33m███\x1b[0m\
-        \x1b[34m███\x1b[0m\x1b[35m███\x1b[0m\x1b[36m███\x1b[0m\x1b[90;1m███\x1b[0m\n\
-        \x1b[90;1m███\x1b[0m\x1b[91;1m███\x1b[0m\x1b[92;1m███\x1b[0m\x1b[93;1m███\x1b[0m\
-        \x1b[94;1m███\x1b[0m\x1b[95;1m███\x1b[0m\x1b[96;1m███\x1b[0m\x1b[100;1m███\x1b[0m\
-        "
-    .to_string();
-    Some(palette)
+pub fn get_palette() -> Vec<String> {
+    vec![
+        "",
+        "\x1b[30m███\x1b[0m\x1b[31m███\x1b[0m\x1b[32m███\x1b[0m\x1b[33m███\x1b[0m\
+        \x1b[34m███\x1b[0m\x1b[35m███\x1b[0m\x1b[36m███\x1b[0m\x1b[90;1m███\x1b[0m",
+        "\x1b[90;1m███\x1b[0m\x1b[91;1m███\x1b[0m\x1b[92;1m███\x1b[0m\x1b[93;1m███\x1b[0m\
+        \x1b[94;1m███\x1b[0m\x1b[95;1m███\x1b[0m\x1b[96;1m███\x1b[0m\x1b[100;1m███\x1b[0m",
+    ]
+    .into_iter()
+    .map(|s| s.to_string())
+    .collect()
 }
 
 fn get_mac_friendly_name(untrimmed_ver_num: String) -> String {

@@ -1,7 +1,7 @@
+use prettytable::{format, row, Table};
 use sysinfo::{System, SystemExt};
 
-use prettytable::{format, row, Table};
-
+mod ansi;
 mod cli;
 mod logo;
 mod scanner;
@@ -36,11 +36,13 @@ fn generate_info(ctx: cli::Ctx) {
     let gpu_name = scanner::get_gpu_name(&sys);
     let mem_info = scanner::get_mem_info(&sys);
     let palette = scanner::get_palette();
+    let palette_lines = palette.as_slice().iter();
+
     let logo = scanner::get_logo(&sys);
 
     // Structure and output system information
     let sys_info_col = if !ctx.args.minimal {
-        vec![
+        [
             Some("\n".to_owned()),
             user_prompt,
             sys_name,
@@ -52,10 +54,11 @@ fn generate_info(ctx: cli::Ctx) {
             cpu_name,
             gpu_name,
             mem_info,
-            palette,
         ]
-        .into_iter()
+        .iter()
         .flatten()
+        .chain(palette_lines)
+        .map(|s| ansi::truncate(&s, 80))
         .collect::<Vec<String>>()
         .join("\n")
     } else {

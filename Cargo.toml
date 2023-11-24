@@ -19,3 +19,4 @@ regex = "1.7.3"
 serde = { version = "1.0.159", features = ["derive"] }
 serde_json = "1.0.95"
 sysinfo = "0.28.2"
+unicode-segmentation = "1.10.1"
