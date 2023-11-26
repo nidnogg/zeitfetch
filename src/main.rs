@@ -1,4 +1,5 @@
 use prettytable::{format, row, Table};
+use std::str;
 use sysinfo::{System, SystemExt};
 
 mod ansi;
@@ -6,12 +7,14 @@ mod cli;
 mod logo;
 mod scanner;
 
-fn main() {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let ctx = cli::Ctx::new();
-    generate_info(ctx);
+    generate_info(&ctx)?;
+
+    Ok(())
 }
 
-fn generate_info(ctx: cli::Ctx) {
+fn generate_info(ctx: &cli::Ctx) -> Result<(), Box<dyn std::error::Error>> {
     // "new_all" used to ensure that all list of
     // components, network interfaces, disks and users are already
     // filled
@@ -22,17 +25,13 @@ fn generate_info(ctx: cli::Ctx) {
 
     let logo = scanner::get_logo(&sys);
     let logo_col = logo.unwrap_or_else(|| "".into());
-    let logo_width = logo_col.lines().map(|s| ansi::len(s)).max().unwrap_or(0);
-
-    // includes width of column border plus 1 extra
-    let info_width = ctx.width.saturating_sub(logo_width).saturating_sub(4);
 
     let mut table = Table::new();
     table.set_format(*format::consts::FORMAT_CLEAN);
 
     // Check ctx and generate according tables
     if ctx.args.no_logo {
-        let sys_info_col = full_sys_info_col(&sys, &ctx, info_width);
+        let sys_info_col = full_sys_info_col(&sys, ctx);
         table.add_row(row![&sys_info_col]);
     } else if ctx.args.minimal {
         let sys_info_col = minimal_sys_info_col(&sys, ctx);
@@ -41,14 +40,22 @@ fn generate_info(ctx: cli::Ctx) {
     } else if ctx.args.logo_only {
         table.add_row(row![&logo_col]);
     } else {
-        let sys_info_col = full_sys_info_col(&sys, &ctx, info_width);
+        let sys_info_col = full_sys_info_col(&sys, ctx);
         table.add_row(row![&logo_col, &sys_info_col]);
     }
-    table.printstd();
+    let mut buf = Vec::new();
+    table.print(&mut buf)?;
+
+    str::from_utf8(&buf)?
+        .lines()
+        .map(|s| ansi::truncate(s, ctx.width))
+        .for_each(|s| println!("{}", s));
+
+    Ok(())
 }
 
-fn full_sys_info_col(sys: &System, ctx: &cli::Ctx, info_width: usize) -> String {
-    let user_prompt = scanner::get_user_prompt(sys, &ctx);
+fn full_sys_info_col(sys: &System, ctx: &cli::Ctx) -> String {
+    let user_prompt = scanner::get_user_prompt(sys, ctx);
     let sys_name = scanner::get_sys_name(sys);
     let host_name = scanner::get_host_name(sys);
     let uptime = scanner::get_uptime(sys);
@@ -80,7 +87,7 @@ fn full_sys_info_col(sys: &System, ctx: &cli::Ctx, info_width: usize) -> String 
     .iter()
     .flatten()
     .chain(palette_lines)
-    .map(|s| ansi::truncate(&s, info_width))
+    .map(|s| s.to_owned())
     .collect::<Vec<String>>()
     .join("\n")
 }
