@@ -24,10 +24,8 @@ fn generate_info(ctx: cli::Ctx) {
     let logo_col = logo.unwrap_or_else(|| "".into());
     let logo_width = logo_col.lines().map(|s| ansi::len(s)).max().unwrap_or(0);
 
-    let term_width = termsize::get().map(|w| w.cols).unwrap_or(80);
-    let info_width = usize::from(term_width)
-        .saturating_sub(logo_width)
-        .saturating_sub(4); // includes width of column border plus 1 extra
+    // includes width of column border plus 1 extra
+    let info_width = ctx.width.saturating_sub(logo_width).saturating_sub(4);
 
     let mut table = Table::new();
     table.set_format(*format::consts::FORMAT_CLEAN);

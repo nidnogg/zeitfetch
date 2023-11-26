@@ -10,6 +10,7 @@ const ASCII_LOGO: &str = r"
 ";
 pub struct Ctx {
     pub args: Args,
+    pub width: usize,
 }
 
 #[derive(Debug, Default)]
@@ -23,7 +24,8 @@ pub struct Args {
 impl Ctx {
     pub fn new() -> Self {
         let args = Args::parse_args();
-        Ctx { args }
+        let width = termsize::get().map(|w| w.cols).unwrap_or(80).into();
+        Ctx { width, args }
     }
 }
 
