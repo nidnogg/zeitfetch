@@ -1,21 +1,44 @@
 use unicode_segmentation::UnicodeSegmentation;
 
-// truncate a string ignore ANSI graphics
+// truncate a string, ignoring ANSI graphics. This will preserve trailing ANSI
+// graphics past the truncation point.
 pub fn truncate(s: &str, n: usize) -> String {
+    #[derive(Debug, PartialEq, Eq)]
+    enum State {
+        Normal,
+        Ansi,
+        Final,
+    }
+
+    use State::*;
+
     let mut count = 0;
+    let mut state = Normal;
     let mut out = String::new();
-    let mut in_ansi = false;
+
     for g in s.graphemes(true) {
-        if count >= n {
-            break;
-        }
-        if g == "\x1b" {
-            in_ansi = true;
-        } else if g == "m" && in_ansi {
-            in_ansi = false;
-        } else {
-            if !in_ansi {
-                count += 1;
+        match state {
+            Normal => {
+                if g == "\x1b" {
+                    state = Ansi;
+                } else {
+                    count += 1;
+                    if count > n {
+                        state = Final;
+                        continue;
+                    }
+                }
+            }
+            Ansi => {
+                if g == "m" {
+                    state = Normal;
+                }
+            }
+            Final => {
+                if g != "\x1b" {
+                    continue;
+                }
+                state = Ansi;
             }
         }
         out.push_str(g)
@@ -23,42 +46,35 @@ pub fn truncate(s: &str, n: usize) -> String {
     out.to_string()
 }
 
-// length of string ignoreing ANSI graphics
-pub fn len(s: &str) -> usize {
-    let mut count = 0;
-    let mut in_ansi = false;
-    for g in s.graphemes(true) {
-        if g == "\x1b" {
-            in_ansi = true;
-        } else if g == "m" && in_ansi {
-            in_ansi = false;
-        } else if !in_ansi {
-            count += 1;
-        }
-    }
-    count
-}
-
 #[cfg(test)]
 mod test {
-    #[test]
-    fn test_truncate_plain() {
-        assert_eq!(super::truncate("hello", 3), "hel");
-        assert_eq!(super::truncate("hello", 5), "hello");
-        assert_eq!(super::truncate("hello", 6), "hello");
+    use rstest::rstest;
+
+    #[rstest]
+    #[case("hello", 4, "hell")]
+    #[case("hello", 5, "hello")]
+    #[case("hello", 6, "hello")]
+    fn test_truncate_plain(#[case] input: &str, #[case] n: usize, #[case] expected: &str) {
+        assert_eq!(super::truncate(input, n), expected);
     }
 
-    #[test]
-    fn test_truncate_ansi() {
-        // TODO: ensure reset at end
-        assert_eq!(super::truncate("\x1b[1mhello\x1b[0m", 3), "\x1b[1mhel");
-        assert_eq!(
-            super::truncate("\x1b[1mhello\x1b[0m", 5),
-            "\x1b[1mhello\x1b[0m"
-        );
-        assert_eq!(
-            super::truncate("\x1b[1mhello\x1b[0m", 6),
-            "\x1b[1mhello\x1b[0m"
-        );
+    #[rstest]
+    #[case("\x1b[1mhello\x1b[0m", 0, "\x1b[1m\x1b[0m")]
+    #[case("\x1b[1mhello\x1b[0m", 4, "\x1b[1mhell\x1b[0m")]
+    #[case("\x1b[1mhello\x1b[0m", 5, "\x1b[1mhello\x1b[0m")]
+    #[case("\x1b[1mhello\x1b[0m", 6, "\x1b[1mhello\x1b[0m")]
+    #[case("\x1b[1mhello\x1b[0m\x1b[1m", 4, "\x1b[1mhell\x1b[0m\x1b[1m")]
+    #[case(
+        "\x1b[1mhello\x1b[0m \x1b[1mworld!\x1b[0m",
+        4,
+        "\x1b[1mhell\x1b[0m\x1b[1m\x1b[0m"
+    )]
+    #[case(
+        "\x1b[1mhello\x1b[0m \x1b[1mworld!\x1b[0m",
+        7,
+        "\x1b[1mhello\x1b[0m \x1b[1mw\x1b[0m"
+    )]
+    fn test_truncate_ansi_rstest(#[case] input: &str, #[case] n: usize, #[case] expected: &str) {
+        assert_eq!(super::truncate(input, n), expected);
     }
 }
