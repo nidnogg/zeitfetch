@@ -1,7 +1,21 @@
-pub fn get_logo_by_distro(sys_name: &str) -> String {
-    match sys_name {
-        "deb" => String::from(
-            "
+use phf::phf_map;
+use strum_macros::{self, Display, EnumCount, EnumString};
+
+#[derive(Debug, Display, PartialEq, Eq, EnumString, EnumCount)]
+pub enum Logo {
+    Deb,
+    Ubuntu,
+    Fedora,
+    Mac,
+    Win11,
+    Win,
+    Arch,
+    Redhat,
+    Linux,
+}
+
+static LOGOS: phf::Map<&'static str, &'static str> = phf_map! {
+    "Deb" => "
 \x1b[1m       _,.ss$$$$$gg.\x1b[0m
 \x1b[1m    ,g$$$$$$$$$$$$$$$P.\x1b[0m
 \x1b[1m  ,g$$P`'     ```Y$$.`.\x1b[0m
@@ -18,11 +32,8 @@ pub fn get_logo_by_distro(sys_name: &str) -> String {
 \x1b[1m    `$$b.\x1b[0m
 \x1b[1m       `Y$$b.\x1b[0m
 \x1b[1m          ``Y$b._\x1b[0m
-\x1b[1m              ```\x1b[0m
-            ",
-        ),
-        "ubuntu" => String::from(
-            "
+\x1b[1m              ```\x1b[0m",
+    "Ubuntu" => "
 \x1b[1m                        \x1b[91;1m./+o+-\x1b[0m
 \x1b[1m                yyyyy- \x1b[91;1m-yyyyyy+\x1b[0m
 \x1b[1m             ://+//////\x1b[91;1m-yyyyyyo\x1b[0m
@@ -40,11 +51,8 @@ pub fn get_logo_by_distro(sys_name: &str) -> String {
 \x1b[1m          \x1b[93;1m.o:\x1b[0m`\x1b[91;1m.syhhhhhhh/\x1b[0m\x1b[93;1m.oo++o`\x1b[0m
 \x1b[1m              \x1b[91;1m/osyyyyyyo\x1b[93;1m++ooo+++/\x1b[0m
 \x1b[1m                  \x1b[91;1m`````\x1b[0m \x1b[93;1m+oo+++o\\:\x1b[0m
-\x1b[1m                         \x1b[93;1m`oo++.\x1b[0m
-                ",
-        ),
-        "fedora" => String::from(
-            "
+\x1b[1m                         \x1b[93;1m`oo++.\x1b[0m",
+    "Fedora" => "
 \x1b[94;1m             .',;::::;,'.\x1b[0m
 \x1b[94;1m         .';:cccccccccccc:;,.\x1b[0m
 \x1b[94;1m      .;cccccccccccccccccccccc;.\x1b[0m
@@ -64,9 +72,7 @@ pub fn get_logo_by_distro(sys_name: &str) -> String {
 \x1b[94;1m:cccccccccccccccccccccccccccc:'.\x1b[0m
 \x1b[94;1m.:cccccccccccccccccccccc:;,..\x1b[0m
 \x1b[94;1m  '::cccccccccccccc::;,.\x1b[0m",
-        ),
-        "mac" => String::from(
-            "
+    "Mac" => "
 \x1b[92;1m                   'c.\x1b[0m
 \x1b[92;1m                ,xNMM.\x1b[0m
 \x1b[92;1m              .OMMMMo\x1b[0m
@@ -83,11 +89,8 @@ pub fn get_logo_by_distro(sys_name: &str) -> String {
 \x1b[95;1m .XMMMMMMMMMMMMMMMMMMMMMMMMK.\x1b[0m
 \x1b[94;1m   kMMMMMMMMMMMMMMMMMMMMMMd\x1b[0m
 \x1b[94;1m    ;KMMMMMMMWXXWMMMMMMMk.\x1b[0m
-\x1b[94;1m      .cooc,.    .,coo:.\x1b[0m
-                ",
-        ),
-        "win11" => String::from(
-            "
+\x1b[94;1m      .cooc,.    .,coo:.\x1b[0m",
+    "Win11" => "
 \x1b[34;1mlllllllllllllll   lllllllllllllll\x1b[0m
 \x1b[34;1mlllllllllllllll   lllllllllllllll\x1b[0m
 \x1b[34;1mlllllllllllllll   lllllllllllllll\x1b[0m
@@ -103,9 +106,7 @@ pub fn get_logo_by_distro(sys_name: &str) -> String {
 \x1b[34;1mlllllllllllllll   lllllllllllllll\x1b[0m
 \x1b[34;1mlllllllllllllll   lllllllllllllll\x1b[0m
 \x1b[34;1mlllllllllllllll   lllllllllllllll\x1b[0m",
-        ),
-        "win" => String::from(
-            "
+    "Win" => "
 \x1b[34m                  .oodMMMMMMMMMMMM\x1b[0m
 \x1b[34m      ..oodMMM  MMMMMMMMMMMMMMMMMM\x1b[0m
 \x1b[34moodMMMMMMMMMMM  MMMMMMMMMMMMMMMMMM\x1b[0m
@@ -123,30 +124,26 @@ pub fn get_logo_by_distro(sys_name: &str) -> String {
 \x1b[34m`^^^^^^MMMMMMM  MMMMMMMMMMMMMMMMMM\x1b[0m
 \x1b[34m    ````^^^^  ^^MMMMMMMMMMMMMMMMMM\x1b[0m
 \x1b[34m                  ````^^^^^^MMMMMM\x1b[0m",
-        ),
-        "arch" => String::from(
-            "
- \x1b[94;1m                 ##                 \x1b[0m
- \x1b[94;1m                ####                \x1b[0m
- \x1b[94;1m               ######               \x1b[0m
- \x1b[94;1m              ########              \x1b[0m
- \x1b[94;1m             ##########             \x1b[0m
- \x1b[94;1m            ############            \x1b[0m
- \x1b[94;1m           ##############           \x1b[0m
- \x1b[94;1m          ################          \x1b[0m
- \x1b[94;1m         ##################         \x1b[0m
- \x1b[94;1m        ####################        \x1b[0m
- \x1b[94;1m       ######################       \x1b[0m
- \x1b[94;1m      #########      #########      \x1b[0m
- \x1b[94;1m     ##########      ##########     \x1b[0m
- \x1b[94;1m    ###########      ###########    \x1b[0m
- \x1b[94;1m   ##########          ##########   \x1b[0m
- \x1b[94;1m  #######                  #######  \x1b[0m
- \x1b[94;1m ####                          #### \x1b[0m
- \x1b[94;1m###                              ###\x1b[0m",
-        ),
-        "redhat" => String::from(
-            "
+    "Arch" => "
+\x1b[94;1m                 ##                 \x1b[0m
+\x1b[94;1m                ####                \x1b[0m
+\x1b[94;1m               ######               \x1b[0m
+\x1b[94;1m              ########              \x1b[0m
+\x1b[94;1m             ##########             \x1b[0m
+\x1b[94;1m            ############            \x1b[0m
+\x1b[94;1m           ##############           \x1b[0m
+\x1b[94;1m          ################          \x1b[0m
+\x1b[94;1m         ##################         \x1b[0m
+\x1b[94;1m        ####################        \x1b[0m
+\x1b[94;1m       ######################       \x1b[0m
+\x1b[94;1m      #########      #########      \x1b[0m
+\x1b[94;1m     ##########      ##########     \x1b[0m
+\x1b[94;1m    ###########      ###########    \x1b[0m
+\x1b[94;1m   ##########          ##########   \x1b[0m
+\x1b[94;1m  #######                  #######  \x1b[0m
+\x1b[94;1m ####                          #### \x1b[0m
+\x1b[94;1m###                              ###\x1b[0m",
+    "Redhat" => "
 \x1b[31;1m\x1b[0m
 \x1b[31;1m             ..   .:..\x1b[0m
 \x1b[31;1m           .:::::::::::::..\x1b[0m
@@ -162,9 +159,7 @@ pub fn get_logo_by_distro(sys_name: &str) -> String {
 \x1b[31;1m             ..::::::::::::::::::.\x1b[0m
 \x1b[31;1m                  ....:::::...\x1b[0m
 \x1b[31;1m\x1b[0m",
-        ),
-        "linux" => String::from(
-            "
+    "Linux" => "
 \x1b[1m        a8888b.\x1b[0m
 \x1b[1m       d888888b.\x1b[0m
 \x1b[1m       8P\"YP\"Y88\x1b[0m
@@ -180,9 +175,45 @@ pub fn get_logo_by_distro(sys_name: &str) -> String {
 \x1b[1m \x1b[93;1m._/\"Y\x1b[0maa     .\x1b[93;1m|\x1b[0m 88P\x1b[93;1m|\x1b[0m
 \x1b[1m \x1b[93;1m\\    Y\x1b[0mP\"    `\x1b[93;1m|     `.\x1b[0m
 \x1b[1m \x1b[93;1m/     \\\x1b[0m.___.d\x1b[93;1m|    .'\x1b[0m
-\x1b[93;1m `--..__)     `._.'\x1b[0m
-    ",
-        ),
-        _ => String::from(""),
+\x1b[93;1m `--..__)     `._.'\x1b[0m",
+};
+
+pub fn get_logo_by_distro(logo: Logo) -> String {
+    LOGOS[&logo.to_string()].to_string()
+}
+
+mod test {
+    #[test]
+    fn test_logos_keys_match_enum() {
+        use std::str::FromStr;
+        use strum::EnumCount;
+        assert!(
+            super::LOGOS.len() == super::Logo::COUNT,
+            "The number of LOGOS keys is not the same as the number of Logo variants",
+        );
+        super::LOGOS.keys().for_each(|key| {
+            assert!(
+                super::Logo::from_str(key).is_ok(),
+                "LOGOS key {:?} is not a Logo enum variant",
+                key,
+            );
+        });
+    }
+
+    #[test]
+    fn test_logos_reset_sgr() {
+        super::LOGOS.entries().for_each(|(name, logo)| {
+            logo.lines().enumerate().for_each(|(line_no, l)| {
+                if l.is_empty() {
+                    return;
+                }
+                assert!(
+                    crate::ansi::truncate(l, 0).ends_with("\x1b[0m"),
+                    "line {} of logo {:?} did not reset SGR. Please terminate it with \"\\x1b[0m\"",
+                    line_no,
+                    name,
+                );
+            });
+        });
     }
 }

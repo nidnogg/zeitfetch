@@ -30,31 +30,32 @@ lazy_static! {
 
 pub fn get_logo(sys: &System) -> Option<String> {
     sys.name().map(|sys_name| {
+        use crate::logo::Logo::*;
         if sys_name.contains("Windows") {
             if let Some(kernel) = sys.kernel_version() {
                 let float_kernel = kernel.parse::<i32>().unwrap();
                 if float_kernel > 22000 {
-                    get_logo_by_distro("win11")
+                    get_logo_by_distro(Win11)
                 } else {
-                    get_logo_by_distro("win")
+                    get_logo_by_distro(Win)
                 }
             } else {
-                get_logo_by_distro("win")
+                get_logo_by_distro(Win)
             }
         } else if sys_name.contains("Debian") {
-            get_logo_by_distro("deb")
+            get_logo_by_distro(Deb)
         } else if sys_name.contains("Ubuntu") {
-            get_logo_by_distro("ubuntu")
+            get_logo_by_distro(Ubuntu)
         } else if sys_name.contains("Fedora") {
-            get_logo_by_distro("fedora")
+            get_logo_by_distro(Fedora)
         } else if sys_name.contains("Arch") {
-            get_logo_by_distro("arch")
+            get_logo_by_distro(Arch)
         } else if sys_name.contains("Red Hat") {
-            get_logo_by_distro("redhat")
+            get_logo_by_distro(Redhat)
         } else if sys_name.contains("Darwin") || sys_name.contains("Mac") {
-            get_logo_by_distro("mac")
+            get_logo_by_distro(Mac)
         } else {
-            get_logo_by_distro("linux")
+            get_logo_by_distro(Linux)
         }
     })
 }
