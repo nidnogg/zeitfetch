@@ -204,11 +204,13 @@ mod test {
     fn test_logos_reset_sgr() {
         super::LOGOS.entries().for_each(|(name, logo)| {
             logo.lines().enumerate().for_each(|(line_no, l)| {
-                if l.is_empty() {
+                let sgr_only = crate::ansi::truncate(l, 0);
+                if sgr_only.is_empty() {
                     return;
                 }
+
                 assert!(
-                    crate::ansi::truncate(l, 0).ends_with("\x1b[0m"),
+                    sgr_only.ends_with("\x1b[0m"),
                     "line {} of logo {:?} did not reset SGR. Please terminate it with \"\\x1b[0m\"",
                     line_no,
                     name,
