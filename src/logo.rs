@@ -1,6 +1,12 @@
 use phf::phf_map;
 use strum_macros::{self, Display, EnumCount, EnumString};
 
+// These are the supported logos. To add a new logo,
+// 1. Add a variant to this enum
+// 2. Add a corresponding entry to the `LOGOS` map.
+//    The key of the entry will be a `&'static str` that represents the name of
+//    the enum variant, preserving the case, e.g. the variant `Logo::MacOS`
+//    corresponds to `"MacOs"`.
 #[derive(Debug, Display, PartialEq, Eq, EnumString, EnumCount)]
 pub enum Logo {
     Deb,
