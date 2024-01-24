@@ -30,31 +30,32 @@ lazy_static! {
 
 pub fn get_logo(sys: &System) -> Option<String> {
     sys.name().map(|sys_name| {
+        use crate::logo::Logo::*;
         if sys_name.contains("Windows") {
             if let Some(kernel) = sys.kernel_version() {
                 let float_kernel = kernel.parse::<i32>().unwrap();
                 if float_kernel > 22000 {
-                    get_logo_by_distro("win11")
+                    get_logo_by_distro(Win11)
                 } else {
-                    get_logo_by_distro("win")
+                    get_logo_by_distro(Win)
                 }
             } else {
-                get_logo_by_distro("win")
+                get_logo_by_distro(Win)
             }
         } else if sys_name.contains("Debian") {
-            get_logo_by_distro("deb")
+            get_logo_by_distro(Deb)
         } else if sys_name.contains("Ubuntu") {
-            get_logo_by_distro("ubuntu")
+            get_logo_by_distro(Ubuntu)
         } else if sys_name.contains("Fedora") {
-            get_logo_by_distro("fedora")
+            get_logo_by_distro(Fedora)
         } else if sys_name.contains("Arch") {
-            get_logo_by_distro("arch")
+            get_logo_by_distro(Arch)
         } else if sys_name.contains("Red Hat") {
-            get_logo_by_distro("redhat")
+            get_logo_by_distro(Redhat)
         } else if sys_name.contains("Darwin") || sys_name.contains("Mac") {
-            get_logo_by_distro("mac")
+            get_logo_by_distro(Mac)
         } else {
-            get_logo_by_distro("linux")
+            get_logo_by_distro(Linux)
         }
     })
 }
@@ -364,15 +365,17 @@ pub fn get_mem_info(sys: &System) -> Option<String> {
     Some(mem_info)
 }
 
-pub fn get_palette() -> Option<String> {
-    let palette = "\n\
-        \x1b[30m███\x1b[0m\x1b[31m███\x1b[0m\x1b[32m███\x1b[0m\x1b[33m███\x1b[0m\
-        \x1b[34m███\x1b[0m\x1b[35m███\x1b[0m\x1b[36m███\x1b[0m\x1b[90;1m███\x1b[0m\n\
-        \x1b[90;1m███\x1b[0m\x1b[91;1m███\x1b[0m\x1b[92;1m███\x1b[0m\x1b[93;1m███\x1b[0m\
-        \x1b[94;1m███\x1b[0m\x1b[95;1m███\x1b[0m\x1b[96;1m███\x1b[0m\x1b[100;1m███\x1b[0m\
-        "
-    .to_string();
-    Some(palette)
+pub fn get_palette() -> Vec<String> {
+    vec![
+        "",
+        "\x1b[30m███\x1b[0m\x1b[31m███\x1b[0m\x1b[32m███\x1b[0m\x1b[33m███\x1b[0m\
+        \x1b[34m███\x1b[0m\x1b[35m███\x1b[0m\x1b[36m███\x1b[0m\x1b[90;1m███\x1b[0m",
+        "\x1b[90;1m███\x1b[0m\x1b[91;1m███\x1b[0m\x1b[92;1m███\x1b[0m\x1b[93;1m███\x1b[0m\
+        \x1b[94;1m███\x1b[0m\x1b[95;1m███\x1b[0m\x1b[96;1m███\x1b[0m\x1b[100;1m███\x1b[0m",
+    ]
+    .into_iter()
+    .map(|s| s.to_string())
+    .collect()
 }
 
 fn get_mac_friendly_name(untrimmed_ver_num: String) -> String {
