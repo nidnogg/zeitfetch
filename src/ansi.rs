@@ -1,7 +1,7 @@
 use unicode_segmentation::UnicodeSegmentation;
 
-// truncate a string, ignoring ANSI graphics. This will preserve trailing ANSI
-// graphics past the truncation point.
+/// Truncate a string, ignoring ANSI graphics, but preserving trailing ANSI
+/// graphics past the truncation point.
 pub fn truncate(s: &str, n: usize) -> String {
     #[derive(Debug, PartialEq, Eq)]
     enum State {
