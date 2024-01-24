@@ -48,8 +48,11 @@ fn generate_info(ctx: &cli::Ctx) -> Result<(), Box<dyn std::error::Error>> {
 
     str::from_utf8(&buf)?
         .lines()
-        .map(|s| ansi::truncate(s, ctx.width))
-        .for_each(|s| println!("{}", s));
+        .map(|s| match ctx.width {
+            Some(width) => ansi::truncate(s, width),
+            None => s.to_owned(),
+        })
+        .for_each(|s| println!("{s}"));
 
     Ok(())
 }
