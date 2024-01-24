@@ -43,7 +43,8 @@ pub fn truncate(s: &str, n: usize) -> String {
         }
         out.push_str(g)
     }
-    out.to_string()
+
+    out
 }
 
 #[cfg(test)]
