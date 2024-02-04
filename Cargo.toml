@@ -25,5 +25,8 @@ sysinfo = "0.28.2"
 termsize = "0.1.6"
 unicode-segmentation = "1.10.1"
 
+[target.'cfg(windows)'.dependencies]
+winapi = { version = "0.3.9", features = ["processenv"] }
+
 [dev-dependencies]
 rstest = "0.18.2"
