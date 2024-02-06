@@ -6,8 +6,11 @@ mod ansi;
 mod cli;
 mod logo;
 mod scanner;
+mod console;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    _ = console::try_prepare_colors();
+
     let ctx = cli::Ctx::new();
     generate_info(&ctx)?;
 

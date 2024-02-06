@@ -960,4 +960,5 @@ dependencies = [
  "sysinfo",
  "termsize",
  "unicode-segmentation",
+ "winapi 0.3.9",
 ]
