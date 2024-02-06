@@ -1,12 +1,13 @@
 // Windows doesn't always have ANSI color processing enabled by default.
 // This function attempts to safely force-enable it.
 pub fn enforce_ansi_windows() -> bool {
-    #[cfg(windows)] {
+    #[cfg(windows)]
+    {
         if cfg!(target_os = "windows") {
-            use winapi::um::wincon::ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-            use winapi::um::winbase::STD_OUTPUT_HANDLE;
-            use winapi::um::processenv::GetStdHandle;
             use winapi::um::consoleapi::{GetConsoleMode, SetConsoleMode};
+            use winapi::um::processenv::GetStdHandle;
+            use winapi::um::winbase::STD_OUTPUT_HANDLE;
+            use winapi::um::wincon::ENABLE_VIRTUAL_TERMINAL_PROCESSING;
 
             unsafe {
                 let console_handle = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -20,7 +21,10 @@ pub fn enforce_ansi_windows() -> bool {
                     return false;
                 }
 
-                if 0 == SetConsoleMode(console_handle, current_mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING) {
+                if 0 == SetConsoleMode(
+                    console_handle,
+                    current_mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING,
+                ) {
                     return false;
                 }
             }

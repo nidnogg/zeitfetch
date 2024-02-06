@@ -5,11 +5,10 @@ use sysinfo::{System, SystemExt};
 mod ansi;
 mod cli;
 mod logo;
-mod scanner;
 mod platform_util;
+mod scanner;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    
     let ctx = cli::Ctx::new();
     generate_info(&ctx)?;
 
