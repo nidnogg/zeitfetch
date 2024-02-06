@@ -6,11 +6,10 @@ mod ansi;
 mod cli;
 mod logo;
 mod scanner;
-mod console;
+mod platform_util;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    _ = console::try_prepare_colors();
-
+    
     let ctx = cli::Ctx::new();
     generate_info(&ctx)?;
 
@@ -18,6 +17,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn generate_info(ctx: &cli::Ctx) -> Result<(), Box<dyn std::error::Error>> {
+    // Force-enable proper ANSI color rendering on Windows Console
+    _ = platform_util::enforce_ansi_windows();
     // "new_all" used to ensure that all list of
     // components, network interfaces, disks and users are already
     // filled

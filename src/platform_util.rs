@@ -1,6 +1,6 @@
 // Windows doesn't always have ANSI color processing enabled by default.
 // This function attempts to safely force-enable it.
-pub fn try_prepare_colors() -> bool {
+pub fn enforce_ansi_windows() -> bool {
     #[cfg(windows)] {
         if cfg!(target_os = "windows") {
             use winapi::um::wincon::ENABLE_VIRTUAL_TERMINAL_PROCESSING;
