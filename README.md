@@ -44,8 +44,7 @@ cargo install zeitfetch
 On macOS, *zeitfetch* can also be installed via **brew**:
 
 ```bash
-brew tap nidnogg/zeitfetch
-brew install zeitfetch
+brew tap nidnogg/zeitfetch && brew install zeitfetch
 ```
 
 ## Usage 
