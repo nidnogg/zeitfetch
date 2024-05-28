@@ -49,6 +49,10 @@ fn generate_info(ctx: &cli::Ctx) -> Result<(), Box<dyn std::error::Error>> {
     let mut buf = Vec::new();
     table.print(&mut buf)?;
 
+    // Ansi truncating.
+    // TO-DO debug why termsize is unable to set width with cargo build --release.
+    // See https://github.com/nidnogg/zeitfetch/issues/14 for more details.
+    // println!("{:?}", ctx.width);
     str::from_utf8(&buf)?
         .lines()
         .map(|s| match ctx.width {
