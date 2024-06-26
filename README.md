@@ -105,7 +105,7 @@ Current priorities list:
 Most of the ASCII art from _zeitfetch_ is not originally made by me, only slightly modified here and there. All of the respective credit for them is listed below:
 
 | OS | Author | Source
-|---| --- | --- |
+| --- | --- | --- |
 | Debian | [dylanaraps](https://github.com/dylanaraps) | [neofetch](https://github.com/dylanaraps/neofetch) |
 | Ubuntu | [KittyKatt](https://github.com/KittyKatt) | [screenfetch](https://github.com/KittyKatt/screenFetch) |
 | Fedora | likw1dus | [pagure.io](https://pagure.io/design/issue/736) |
