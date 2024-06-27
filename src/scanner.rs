@@ -52,6 +52,8 @@ pub fn get_logo(sys: &System) -> Option<String> {
             get_logo_by_distro(Arch)
         } else if sys_name.contains("Red Hat") {
             get_logo_by_distro(Redhat)
+        } else if sys_name.contains("Void") {
+            get_logo_by_distro(Void)
         } else if sys_name.contains("Darwin") || sys_name.contains("Mac") {
             get_logo_by_distro(Mac)
         } else {

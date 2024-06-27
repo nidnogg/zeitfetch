@@ -110,6 +110,7 @@ Most of the ASCII art from _zeitfetch_ is not originally made by me, only slight
 | Ubuntu | [KittyKatt](https://github.com/KittyKatt) | [screenfetch](https://github.com/KittyKatt/screenFetch) |
 | Fedora | likw1dus | [pagure.io](https://pagure.io/design/issue/736) |
 | Arch | [trizen](https://aur.archlinux.org/packages/alsi/) | [wiki.archlinux.org (alsi)](https://wiki.archlinux.org/title/ASCII_art) |
+| Void | [Xaidee](https://github.com/Xaidee) | original design using [neofetch](https://github.com/dylanaraps/neofetch) as a reference |
 | MacOS | [shelldandy](https://github.com/shelldandy) | [neofetch PR](https://github.com/dylanaraps/neofetch/issues/789) |
 | Windows 11 | [kiedtl](https://github.com/kiedtl) | [winfetch](https://github.com/kiedtl/winfetch) |
 | Windows 10 | [HotDog640](https://github.com/HotDog640) | [neofetch PR](https://github.com/dylanaraps/neofetch/issues/1466) |

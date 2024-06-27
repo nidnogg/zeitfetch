@@ -17,6 +17,7 @@ pub enum Logo {
     Win,
     Arch,
     Redhat,
+    Void,
     Linux,
 }
 
@@ -165,6 +166,25 @@ static LOGOS: phf::Map<&'static str, &'static str> = phf_map! {
 \x1b[31;1m             ..::::::::::::::::::.\x1b[0m
 \x1b[31;1m                  ....:::::...\x1b[0m
 \x1b[31;1m\x1b[0m",
+    "Void" => "
+\x1b[32;1m                ...:::::::...\x1b[0m
+\x1b[32;1m            ..:::::::::::::::::..\x1b[0m
+\x1b[32;1m             ':::::::::::::::::::.\x1b[0m
+\x1b[32;1m        .     '::::''   '':::::::::.\x1b[0m
+\x1b[32;1m       .:V.    '            '':::::::\x1b[0m
+\x1b[32;1m      .VVVVV.                 '::::::.\x1b[0m
+\x1b[32;1m     .VVVVVV'      .:::::.     :::::::.\x1b[0m
+\x1b[90;1m######\x1b[32;1mVVVVV: \x1b[90;1m##^ v########v  ####\x1b[32;1m:\x1b[90;1m##########v\x1b[0m
+\x1b[90;1m v#####\x1b[32;1mVVVV\x1b[90;1m##^ v####\x1b[32;1m:::\x1b[90;1m####\x1b[32;1m.\x1b[90;1m#### ####\x1b[32;1m:: \x1b[90;1m#####\x1b[0m
+\x1b[90;1m  v########^   ####\x1b[32;1m:::\x1b[90;1m####\x1b[32;1m:\x1b[90;1m#### #####\x1b[32;1m::\x1b[90;1m#####^\x1b[0m
+\x1b[90;1m   v####^\x1b[32;1mVV:   \x1b[90;1m^########^\x1b[32;1m:\x1b[90;1m#### ###########^\x1b[0m
+\x1b[32;1m     VVVVVVV.      ':::::'      ::::::\x1b[0m
+\x1b[32;1m      VVVVVVV.                 ''::::'\x1b[0m
+\x1b[32;1m       VVVVVVVV..          .      :::\x1b[0m
+\x1b[32;1m        'VVVVVVVVVV::...::VVV.     '\x1b[0m
+\x1b[32;1m          'VVVVVVVVVVVVVVVVVVV:.\x1b[0m
+\x1b[32;1m            ':VVVVVVVVVVVVVVVVV:'\x1b[0m
+\x1b[32;1m               '':VVVVVVVVV:''\x1b[0m",
     "Linux" => "
 \x1b[1m        a8888b.\x1b[0m
 \x1b[1m       d888888b.\x1b[0m
