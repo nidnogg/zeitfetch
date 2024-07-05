@@ -1,6 +1,6 @@
 [package]
 name = "zeitfetch"
-version = "0.1.11"
+version = "0.1.12"
 edition = "2021"
 authors = ["Henrique V (nidnogg)"]
 description = "Instantaneous snapshots of cross-platform system information"
@@ -22,7 +22,7 @@ serde_json = "1.0.95"
 strum = "0.25.0"
 strum_macros = "0.25.3"
 sysinfo = "0.29.11"
-termsize = "0.1.6"
+termsize = "0.1.8"
 unicode-segmentation = "1.10.1"
 
 [target.'cfg(windows)'.dependencies]

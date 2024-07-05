@@ -27,11 +27,6 @@ impl Ctx {
         let args = Args::parse_args();
         let width: Option<usize> =
             termsize::get().map(|w| if w.cols == 0 { 80 } else { w.cols.into() });
-        // TO-DO debug why termsize is unable to set width with cargo build --release. This commented code results in rows 0 cols 0.
-        // See https://github.com/nidnogg/zeitfetch/issues/14 for more details.
-        // termsize::get().map(|size| {
-        //     println!("rows {} cols {}", size.rows, size.cols)
-        //   });
         Ctx { width, args }
     }
 }
