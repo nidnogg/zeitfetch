@@ -15,7 +15,7 @@ Linux • macOS • Windows <br />
 
 Considering the shortage of fully cross platform screenfetch solutions (including Windows shells) this crate aims to fill that gap.
 
-It's in early stages at the moment, and support for Windows 10, Windows 11, Mac OS X, Debian, Ubuntu, Fedora and Arch is implemented for the time being, with more on the way.
+Several distros are currently supported, with more on the way. There has been a slew of Open Source contributions toward this effort as well. See the [Contribution section](#contribution) if you're interested!
 
 If your Linux distribution is not listed/not being actively tested on, most likely it will be missing a dedicated OS logo, so an ASCII rendition of [Tux](https://en.wikipedia.org/wiki/Tux_(mascot)) will be displayed instead.
 
@@ -45,6 +45,13 @@ On macOS, *zeitfetch* can also be installed via **brew**:
 
 ```bash
 brew tap nidnogg/zeitfetch && brew install zeitfetch
+```
+
+### Fedora 
+Available on Fedora 41+ stable repositories, *zeitfetch* can also be installed via **dnf**, via the `rust-zeitfetch` package:
+```bash
+sudo dnf update
+sudo dnf install rust-zeitfetch
 ```
 
 ## Usage 
