@@ -1,3 +1,5 @@
+use crate::ansi;
+
 #[derive(Clone)]
 pub struct Table {
     rows: Vec<Row>,
@@ -45,10 +47,10 @@ pub enum Alignment {
 // Constants using static str instead of String
 pub mod format {
     use super::*;
-    
+
     pub mod consts {
         use super::*;
-        
+
         pub static FORMAT_CLEAN: &TableFormat = &TableFormat {
             column_separator: "",
             row_separator: "",
@@ -114,24 +116,28 @@ impl Table {
 
     pub fn print<W: std::io::Write>(&self, writer: &mut W) -> std::io::Result<()> {
         let column_widths = self.get_column_widths();
-        
+
         // Print all rows with proper row separation
         for (i, row) in self.rows.iter().enumerate() {
             // Print the current row
             self.print_row(writer, row, &column_widths)?;
-            
+
             // Add row separator if needed and not the last row
             if self.format.borders.internal_h && i < self.rows.len() - 1 {
                 // Add row separator line here if needed
                 self.print_separator(writer, &column_widths)?;
             }
         }
-    
+
         Ok(())
     }
-    
+
     // Helper method to print row separators if needed
-    fn print_separator<W: std::io::Write>(&self, writer: &mut W, widths: &[usize]) -> std::io::Result<()> {
+    fn print_separator<W: std::io::Write>(
+        &self,
+        writer: &mut W,
+        widths: &[usize],
+    ) -> std::io::Result<()> {
         if !self.format.row_separator.is_empty() {
             for (i, width) in widths.iter().enumerate() {
                 if i > 0 {
@@ -143,19 +149,29 @@ impl Table {
         }
         Ok(())
     }
-    
+
     fn get_column_widths(&self) -> Vec<usize> {
-        let column_count = self.rows.iter()
+        let column_count = self
+            .rows
+            .iter()
             .map(|row| row.cells.len())
             .max()
             .unwrap_or(0);
-        
+
         let mut widths = vec![0; column_count];
-        
+
         for row in &self.rows {
             for (i, cell) in row.cells.iter().enumerate() {
-                let visible_width = strip_ansi_width(&cell.content);
-                widths[i] = widths[i].max(visible_width + cell.padding.0 + cell.padding.1);
+                let max_line_width = cell
+                    .content
+                    .lines()
+                    .map(strip_ansi_width)
+                    .max()
+                    .unwrap_or(0);
+                let cell_width = max_line_width + cell.padding.0 + cell.padding.1;
+                if i < widths.len() {
+                    widths[i] = widths[i].max(cell_width);
+                }
             }
         }
 
@@ -163,9 +179,9 @@ impl Table {
         if let Some(term_width) = self.width {
             let total_width: usize = widths.iter().sum();
             let separator_width = self.format.column_separator.len() * (widths.len() - 1);
-            
+
             let available_width = term_width.saturating_sub(separator_width);
-            
+
             if total_width > available_width {
                 let ratio = available_width as f64 / total_width as f64;
                 for width in &mut widths {
@@ -177,52 +193,67 @@ impl Table {
         widths
     }
 
-    fn print_row<W: std::io::Write>(&self, writer: &mut W, row: &Row, widths: &[usize]) -> std::io::Result<()> {
-        println!("DEBUG: Starting print_row");
-        println!("DEBUG: Number of cells: {}", row.cells.len());
-        
-        // Print raw content of each cell
-        for (i, cell) in row.cells.iter().enumerate() {
-            println!("DEBUG: Cell {} raw content:\n{}", i, cell.content);
-            println!("DEBUG: Cell {} content bytes: {:?}", i, cell.content.as_bytes());
-        }
-        
-        // Split each cell's content into lines
-        let cell_lines: Vec<Vec<&str>> = row.cells.iter()
-            .map(|cell| {
-                let lines = cell.content.lines().collect::<Vec<_>>();
-                println!("DEBUG: Cell split into {} lines", lines.len());
-                for (i, line) in lines.iter().enumerate() {
-                    println!("DEBUG: Line {}: '{}'", i, line);
-                }
-                lines
-            })
+    fn print_row<W: std::io::Write>(
+        &self,
+        writer: &mut W,
+        row: &Row,
+        widths: &[usize],
+    ) -> std::io::Result<()> {
+        let cell_lines: Vec<Vec<&str>> = row
+            .cells
+            .iter()
+            .map(|cell| cell.content.lines().collect())
             .collect();
-        
-        let max_lines = cell_lines.iter()
+
+        let max_lines = cell_lines
+            .iter()
             .map(|lines| lines.len())
             .max()
             .unwrap_or(0);
-        
-        println!("DEBUG: Max lines: {}", max_lines);
-        println!("DEBUG: Column widths: {:?}", widths);
-        
-        // Print each line
+
         for line_idx in 0..max_lines {
-            for (cell_idx, lines) in cell_lines.iter().enumerate() {
-                if cell_idx > 0 {
-                    write!(writer, "         ")?;
+            for (cell_idx, cell) in row.cells.iter().enumerate() {
+                let content_line = cell_lines[cell_idx].get(line_idx).unwrap_or(&"");
+
+                let visible_len = strip_ansi_width(content_line);
+                let left_pad = cell.padding.0;
+                let right_pad = cell.padding.1;
+                let padded_visible = visible_len + left_pad + right_pad;
+
+                let column_width = *widths.get(cell_idx).unwrap_or(&0);
+                let available_space = column_width as i32 - padded_visible as i32;
+
+                let (align_left, align_right) = if available_space >= 0 {
+                    match cell.align {
+                        Alignment::Left => (0, available_space as usize),
+                        Alignment::Right => (available_space as usize, 0),
+                        Alignment::Center => {
+                            let left = (available_space as usize) / 2;
+                            (left, available_space as usize - left)
+                        }
+                    }
+                } else {
+                    (0, 0)
+                };
+
+                let mut line = String::new();
+                line.push_str(&" ".repeat(align_left));
+                line.push_str(&" ".repeat(left_pad));
+                line.push_str(content_line);
+                line.push_str(&" ".repeat(right_pad));
+                line.push_str(&" ".repeat(align_right));
+
+                let final_line = ansi::truncate(&line, column_width);
+                write!(writer, "{}", final_line)?;
+
+                if cell_idx < row.cells.len() - 1 {
+                    write!(writer, "{}", self.format.column_separator)?;
                 }
-                
-                let content = lines.get(line_idx).unwrap_or(&"");
-                println!("DEBUG: Writing line {} for cell {}: '{}'", line_idx, cell_idx, content);
-                write!(writer, "{}", content)?;
             }
             writeln!(writer)?;
         }
         Ok(())
     }
-    
 }
 
 impl Row {
@@ -254,7 +285,7 @@ impl Cell {
 fn strip_ansi_width(s: &str) -> usize {
     let mut visible_len = 0;
     let mut in_escape = false;
-    
+
     for c in s.chars() {
         if c == '\x1B' {
             in_escape = true;

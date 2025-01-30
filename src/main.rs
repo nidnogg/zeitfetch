@@ -9,7 +9,7 @@ mod platform_util;
 mod scanner;
 mod table;
 
-use crate::table::{Table, format};
+use crate::table::{format, Table};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let ctx = cli::Ctx::new();
