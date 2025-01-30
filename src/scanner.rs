@@ -132,6 +132,7 @@ pub fn get_sys_name(sys: &System) -> Option<String> {
                     stdin.write_all(&buf).unwrap();
                 }
             }
+            let _ = cmd_sw_vers.wait();
             let res = cmd_grep.wait_with_output().unwrap().stdout;
             let sys_friendly_num = &String::from_utf8(res).unwrap()[16..];
             let sys_friendly_num_no_whitespace = &sys_friendly_num[..sys_friendly_num.len() - 1];

@@ -1,6 +1,5 @@
 /// Truncate a string, ignoring ANSI graphics, but preserving trailing ANSI
 /// graphics past the truncation point.
-
 pub fn truncate(s: &str, n: usize) -> String {
     use unicode_segmentation::UnicodeSegmentation;
     use unicode_width::UnicodeWidthStr;
