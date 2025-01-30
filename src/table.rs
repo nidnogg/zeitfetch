@@ -4,7 +4,6 @@ use crate::ansi;
 pub struct Table {
     rows: Vec<Row>,
     format: TableFormat,
-    width: Option<usize>,
 }
 
 #[derive(Clone)]
@@ -15,7 +14,6 @@ pub struct Row {
 #[derive(Clone)]
 pub struct Cell {
     content: String,
-    align: Alignment,
     padding: (usize, usize),
 }
 
@@ -23,28 +21,14 @@ pub struct Cell {
 pub struct TableFormat {
     column_separator: &'static str,
     row_separator: &'static str,
-    padding: usize,
     borders: Borders,
 }
 
 #[derive(Clone)]
 pub struct Borders {
-    top: bool,
-    bottom: bool,
-    left: bool,
-    right: bool,
     internal_h: bool,
-    internal_v: bool,
 }
 
-#[derive(Clone, Copy)]
-pub enum Alignment {
-    Left,
-    Center,
-    Right,
-}
-
-// Constants using static str instead of String
 pub mod format {
     use super::*;
 
@@ -54,34 +38,10 @@ pub mod format {
         pub static FORMAT_CLEAN: &TableFormat = &TableFormat {
             column_separator: "",
             row_separator: "",
-            padding: 1,
-            borders: Borders {
-                top: false,
-                bottom: false,
-                left: false,
-                right: false,
-                internal_h: false,
-                internal_v: false,
-            },
-        };
-
-        pub static FORMAT_BORDERS: &TableFormat = &TableFormat {
-            column_separator: "|",
-            row_separator: "-",
-            padding: 1,
-            borders: Borders {
-                top: true,
-                bottom: true,
-                left: true,
-                right: true,
-                internal_h: true,
-                internal_v: true,
-            },
+            borders: Borders { internal_h: false },
         };
     }
 }
-
-// Export the macro at the crate root
 #[macro_export]
 macro_rules! row {
     ($($x:expr),* $(,)?) => {
@@ -98,16 +58,11 @@ impl Table {
         Table {
             rows: Vec::new(),
             format: format::consts::FORMAT_CLEAN.clone(),
-            width: None,
         }
     }
 
     pub fn set_format(&mut self, format: &TableFormat) {
         self.format = format.clone();
-    }
-
-    pub fn set_width(&mut self, width: Option<usize>) {
-        self.width = width;
     }
 
     pub fn add_row(&mut self, row: Row) {
@@ -116,15 +71,10 @@ impl Table {
 
     pub fn print<W: std::io::Write>(&self, writer: &mut W) -> std::io::Result<()> {
         let column_widths = self.get_column_widths();
-
-        // Print all rows with proper row separation
         for (i, row) in self.rows.iter().enumerate() {
-            // Print the current row
             self.print_row(writer, row, &column_widths)?;
 
-            // Add row separator if needed and not the last row
             if self.format.borders.internal_h && i < self.rows.len() - 1 {
-                // Add row separator line here if needed
                 self.print_separator(writer, &column_widths)?;
             }
         }
@@ -132,7 +82,6 @@ impl Table {
         Ok(())
     }
 
-    // Helper method to print row separators if needed
     fn print_separator<W: std::io::Write>(
         &self,
         writer: &mut W,
@@ -175,21 +124,6 @@ impl Table {
             }
         }
 
-        // Adjust for terminal width if set
-        if let Some(term_width) = self.width {
-            let total_width: usize = widths.iter().sum();
-            let separator_width = self.format.column_separator.len() * (widths.len() - 1);
-
-            let available_width = term_width.saturating_sub(separator_width);
-
-            if total_width > available_width {
-                let ratio = available_width as f64 / total_width as f64;
-                for width in &mut widths {
-                    *width = (*width as f64 * ratio).floor() as usize;
-                }
-            }
-        }
-
         widths
     }
 
@@ -223,17 +157,12 @@ impl Table {
                 let column_width = *widths.get(cell_idx).unwrap_or(&0);
                 let available_space = column_width as i32 - padded_visible as i32;
 
-                let (align_left, align_right) = if available_space >= 0 {
-                    match cell.align {
-                        Alignment::Left => (0, available_space as usize),
-                        Alignment::Right => (available_space as usize, 0),
-                        Alignment::Center => {
-                            let left = (available_space as usize) / 2;
-                            (left, available_space as usize - left)
-                        }
-                    }
+                // Simple always-left alignment:
+                let align_left = 0;
+                let align_right = if available_space > 0 {
+                    available_space as usize
                 } else {
-                    (0, 0)
+                    0
                 };
 
                 let mut line = String::new();
@@ -266,19 +195,8 @@ impl Cell {
     pub fn new<S: Into<String>>(content: S) -> Self {
         Cell {
             content: content.into(),
-            align: Alignment::Left,
             padding: (1, 1),
         }
-    }
-
-    pub fn align(mut self, align: Alignment) -> Self {
-        self.align = align;
-        self
-    }
-
-    pub fn padding(mut self, left: usize, right: usize) -> Self {
-        self.padding = (left, right);
-        self
     }
 }
 
@@ -300,9 +218,4 @@ fn strip_ansi_width(s: &str) -> usize {
         visible_len += 1;
     }
     visible_len
-}
-
-// Terminal width detection
-pub fn get_terminal_width() -> Option<usize> {
-    termsize::get().map(|size| size.cols as usize)
 }

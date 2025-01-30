@@ -1,9 +1,9 @@
 /// Truncate a string, ignoring ANSI graphics, but preserving trailing ANSI
 /// graphics past the truncation point.
-use unicode_segmentation::UnicodeSegmentation;
-use unicode_width::UnicodeWidthStr;
 
 pub fn truncate(s: &str, n: usize) -> String {
+    use unicode_segmentation::UnicodeSegmentation;
+    use unicode_width::UnicodeWidthStr;
     #[derive(Debug, PartialEq, Eq)]
     enum State {
         Normal,
@@ -52,13 +52,13 @@ pub fn truncate(s: &str, n: usize) -> String {
         }
     }
 
-    // Ensure all ANSI sequences are properly closed
-    if !out.ends_with("\x1b[0m") {
+    if state == Ansi {
         out.push_str("\x1b[0m");
     }
 
     out
 }
+
 #[cfg(test)]
 mod test {
     use rstest::rstest;
