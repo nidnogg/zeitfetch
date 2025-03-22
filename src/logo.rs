@@ -19,6 +19,7 @@ pub enum Logo {
     Redhat,
     Void,
     Linux,
+    Bsd
 }
 
 static LOGOS: phf::Map<&'static str, &'static str> = phf_map! {
