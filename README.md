@@ -19,6 +19,7 @@ Several distros are currently supported, with more on the way. There has been a 
 
 If your Linux distribution is not listed/not being actively tested on, most likely it will be missing a dedicated OS logo, so an ASCII rendition of [Tux](https://en.wikipedia.org/wiki/Tux_(mascot)) will be displayed instead.
 
+:newspaper: See _zeitfetch_ featured in [Terminal Trove](https://terminaltrove.com/zeitfetch/)!
 
 ## Features
 
