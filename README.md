@@ -48,18 +48,18 @@ On macOS, *zeitfetch* can also be installed via **brew**:
 brew tap nidnogg/zeitfetch && brew install zeitfetch
 ```
 
-### Fedora 
+### Fedora
 Available on Fedora 41+ stable repositories, *zeitfetch* can also be installed via **dnf**, via the `rust-zeitfetch` package:
 ```bash
 sudo dnf update
 sudo dnf install rust-zeitfetch
 ```
 
-## Usage 
-Just run: 
+## Usage
+Just run:
 ```bash
 zeitfetch
-``` 
+```
 
 If you want to customize the output a bit, some options are listed below:
 ```bash
@@ -68,10 +68,10 @@ zeitfetch --logo-only   # omits sys info text
 zeitfetch --minimal     # display logo + user prompt vertically
 ```
 
-If you're unsure of what to use, run: 
+If you're unsure of what to use, run:
 ```bash
-zeitfetch --help 
-# alternatively, 
+zeitfetch --help
+# alternatively,
 zeitfetch -h
 ```
 ## Note for running on terminal boot
@@ -123,7 +123,7 @@ Most of the ASCII art from _zeitfetch_ is not originally made by me, only slight
 | Windows 11 | [kiedtl](https://github.com/kiedtl) | [winfetch](https://github.com/kiedtl/winfetch) |
 | Windows 10 | [HotDog640](https://github.com/HotDog640) | [neofetch PR](https://github.com/dylanaraps/neofetch/issues/1466) |
 | Linux | Joan Stark (jgs) | [Wikipedia](https://en.wikipedia.org/wiki/Joan_Stark) |
-
+| BSD | Felix Lee | [FreeBSD Logo](https://en.wikipedia.org/wiki/BSD_Daemon#ASCII_image) |
 If any artists feel like this is an issue in particular, please feel free to drop me an email @ [henriquevt98@gmail.com](mailto:henriquevt98@gmail.com) and I'll remove any infringing works ASAP.
 
 ## Latest Updates
