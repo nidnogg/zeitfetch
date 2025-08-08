@@ -1,12 +1,18 @@
 [package]
 name = "zeitfetch"
-version = "0.1.15"
+version = "0.1.16"
 edition = "2021"
 authors = ["Henrique V (nidnogg)"]
 description = "Instantaneous snapshots of cross-platform system information"
 license = "MIT"
 keywords = ["fetch", "system", "info", "cli", "utils"]
-categories = ["command-line-utilities", "os", "rendering", "visualization", "filesystem"]
+categories = [
+    "command-line-utilities",
+    "os",
+    "rendering",
+    "visualization",
+    "filesystem",
+]
 repository = "https://github.com/nidnogg/zeitfetch"
 homepage = "https://github.com/nidnogg/zeitfetch"
 readme = "README.md"
