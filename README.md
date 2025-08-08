@@ -85,6 +85,8 @@ export PATH="$HOME/.cargo/bin:$PATH"
 ```
 ## Contribution
 
+Also outlined in the [CONTRIBUTING.md](CONTRIBUTING.md) file.
+
 If you feel like contributing to _zeitfetch_, feel free to fork it and open up a PR. Any merges will be checked for `cargo fmt` and `cargo clippy`.
 
 So, before pushing changes to your branch, make sure you run:
