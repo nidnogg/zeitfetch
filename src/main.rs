@@ -1,12 +1,15 @@
-use prettytable::{format, row, Table};
 use std::str;
 use sysinfo::{System, SystemExt};
+// use prettytable::{format, row, Table};
 
 mod ansi;
 mod cli;
 mod logo;
 mod platform_util;
 mod scanner;
+mod table;
+
+use crate::table::{format, Table};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let ctx = cli::Ctx::new();
@@ -30,7 +33,7 @@ fn generate_info(ctx: &cli::Ctx) -> Result<(), Box<dyn std::error::Error>> {
     let logo_col = logo.unwrap_or_else(|| "".into());
 
     let mut table = Table::new();
-    table.set_format(*format::consts::FORMAT_CLEAN);
+    table.set_format(format::consts::FORMAT_CLEAN);
 
     // Check ctx and generate according tables
     if ctx.args.no_logo {

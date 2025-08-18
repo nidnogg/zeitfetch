@@ -1,12 +1,18 @@
 [package]
 name = "zeitfetch"
-version = "0.1.14"
+version = "0.1.15"
 edition = "2021"
 authors = ["Henrique V (nidnogg)"]
 description = "Instantaneous snapshots of cross-platform system information"
 license = "MIT"
 keywords = ["fetch", "system", "info", "cli", "utils"]
-categories = ["command-line-utilities", "os", "rendering", "visualization", "filesystem"]
+categories = [
+    "command-line-utilities",
+    "os",
+    "rendering",
+    "visualization",
+    "filesystem",
+]
 repository = "https://github.com/nidnogg/zeitfetch"
 homepage = "https://github.com/nidnogg/zeitfetch"
 readme = "README.md"
@@ -15,7 +21,6 @@ readme = "README.md"
 home = "0.5.3"
 lazy_static = "1.4.0"
 phf = { version = "0.11.2", features = ["macros"] }
-prettytable-rs = "^0.10"
 regex = "1.7.3"
 serde = { version = "1.0.159", features = ["derive"] }
 serde_json = "1.0.95"
@@ -23,7 +28,10 @@ strum = "0.25.0"
 strum_macros = "0.25.3"
 sysinfo = "0.29.11"
 termsize = "0.1.8"
+terminal_size = "0.4.1"
 unicode-segmentation = "1.10.1"
+unicode-width = "0.2.0"
+
 
 [target.'cfg(windows)'.dependencies]
 winapi = { version = "0.3.9", features = ["processenv"] }

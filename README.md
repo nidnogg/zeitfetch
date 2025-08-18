@@ -19,6 +19,7 @@ Several distros are currently supported, with more on the way. There has been a 
 
 If your Linux distribution is not listed/not being actively tested on, most likely it will be missing a dedicated OS logo, so an ASCII rendition of [Tux](https://en.wikipedia.org/wiki/Tux_(mascot)) will be displayed instead.
 
+:newspaper: See _zeitfetch_ featured in [Terminal Trove](https://terminaltrove.com/zeitfetch/)!
 
 ## Features
 
@@ -47,18 +48,18 @@ On macOS, *zeitfetch* can also be installed via **brew**:
 brew tap nidnogg/zeitfetch && brew install zeitfetch
 ```
 
-### Fedora 
+### Fedora
 Available on Fedora 41+ stable repositories, *zeitfetch* can also be installed via **dnf**, via the `rust-zeitfetch` package:
 ```bash
 sudo dnf update
 sudo dnf install rust-zeitfetch
 ```
 
-## Usage 
-Just run: 
+## Usage
+Just run:
 ```bash
 zeitfetch
-``` 
+```
 
 If you want to customize the output a bit, some options are listed below:
 ```bash
@@ -67,10 +68,10 @@ zeitfetch --logo-only   # omits sys info text
 zeitfetch --minimal     # display logo + user prompt vertically
 ```
 
-If you're unsure of what to use, run: 
+If you're unsure of what to use, run:
 ```bash
-zeitfetch --help 
-# alternatively, 
+zeitfetch --help
+# alternatively,
 zeitfetch -h
 ```
 ## Note for running on terminal boot
@@ -83,6 +84,8 @@ zeitfetch -h
 export PATH="$HOME/.cargo/bin:$PATH"
 ```
 ## Contribution
+
+Also outlined in the [CONTRIBUTING.md](CONTRIBUTING.md) file.
 
 If you feel like contributing to _zeitfetch_, feel free to fork it and open up a PR. Any merges will be checked for `cargo fmt` and `cargo clippy`.
 
@@ -122,7 +125,7 @@ Most of the ASCII art from _zeitfetch_ is not originally made by me, only slight
 | Windows 11 | [kiedtl](https://github.com/kiedtl) | [winfetch](https://github.com/kiedtl/winfetch) |
 | Windows 10 | [HotDog640](https://github.com/HotDog640) | [neofetch PR](https://github.com/dylanaraps/neofetch/issues/1466) |
 | Linux | Joan Stark (jgs) | [Wikipedia](https://en.wikipedia.org/wiki/Joan_Stark) |
-
+| BSD | Felix Lee | [FreeBSD Logo](https://en.wikipedia.org/wiki/BSD_Daemon#ASCII_image) |
 If any artists feel like this is an issue in particular, please feel free to drop me an email @ [henriquevt98@gmail.com](mailto:henriquevt98@gmail.com) and I'll remove any infringing works ASAP.
 
 ## Latest Updates

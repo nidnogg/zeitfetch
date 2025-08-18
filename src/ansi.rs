@@ -2,7 +2,7 @@
 /// graphics past the truncation point.
 pub fn truncate(s: &str, n: usize) -> String {
     use unicode_segmentation::UnicodeSegmentation;
-
+    use unicode_width::UnicodeWidthStr;
     #[derive(Debug, PartialEq, Eq)]
     enum State {
         Normal,
@@ -12,36 +12,47 @@ pub fn truncate(s: &str, n: usize) -> String {
 
     use State::*;
 
-    let mut count = 0;
+    let mut visible_width = 0;
     let mut state = Normal;
     let mut out = String::new();
+    let mut current_ansi = String::new();
 
     for g in s.graphemes(true) {
         match state {
             Normal => {
                 if g == "\x1b" {
                     state = Ansi;
+                    current_ansi.clear();
+                    current_ansi.push_str(g);
                 } else {
-                    count += 1;
-                    if count > n {
+                    let char_width = g.width();
+                    if visible_width + char_width > n {
                         state = Final;
                         continue;
                     }
+                    visible_width += char_width;
+                    out.push_str(g);
                 }
             }
             Ansi => {
+                current_ansi.push_str(g);
                 if g == "m" {
+                    out.push_str(&current_ansi);
                     state = Normal;
                 }
             }
             Final => {
-                if g != "\x1b" {
-                    continue;
+                if g == "\x1b" {
+                    state = Ansi;
+                    current_ansi.clear();
+                    current_ansi.push_str(g);
                 }
-                state = Ansi;
             }
         }
-        out.push_str(g)
+    }
+
+    if state == Ansi {
+        out.push_str("\x1b[0m");
     }
 
     out

@@ -54,6 +54,8 @@ pub fn get_logo(sys: &System) -> Option<String> {
             get_logo_by_distro(Redhat)
         } else if sys_name.contains("Void") {
             get_logo_by_distro(Void)
+        } else if sys_name.contains("BSD") || sys_name.contains("bsd") {
+            get_logo_by_distro(Bsd)
         } else if sys_name.contains("Darwin") || sys_name.contains("Mac") {
             get_logo_by_distro(Mac)
         } else {
@@ -133,6 +135,7 @@ pub fn get_sys_name(sys: &System) -> Option<String> {
                 }
             }
             cmd_sw_vers.wait().unwrap();
+            let _ = cmd_sw_vers.wait();
             let res = cmd_grep.wait_with_output().unwrap().stdout;
             let sys_friendly_num = &String::from_utf8(res).unwrap()[16..];
             let sys_friendly_num_no_whitespace = &sys_friendly_num[..sys_friendly_num.len() - 1];
