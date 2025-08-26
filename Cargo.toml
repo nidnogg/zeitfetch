@@ -34,7 +34,7 @@ unicode-width = "0.2.0"
 
 
 [target.'cfg(windows)'.dependencies]
-winapi = { version = "0.3.9", features = ["processenv"] }
+winapi = { version = "0.3.9", features = ["processenv", "consoleapi"] }
 
 [dev-dependencies]
 rstest = "0.26.0"
