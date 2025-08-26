@@ -126,6 +126,7 @@ Most of the ASCII art from _zeitfetch_ is not originally made by me, only slight
 | Windows 10 | [HotDog640](https://github.com/HotDog640) | [neofetch PR](https://github.com/dylanaraps/neofetch/issues/1466) |
 | Linux | Joan Stark (jgs) | [Wikipedia](https://en.wikipedia.org/wiki/Joan_Stark) |
 | BSD | Felix Lee | [FreeBSD Logo](https://en.wikipedia.org/wiki/BSD_Daemon#ASCII_image) |
+
 If any artists feel like this is an issue in particular, please feel free to drop me an email @ [henriquevt98@gmail.com](mailto:henriquevt98@gmail.com) and I'll remove any infringing works ASAP.
 
 ## Latest Updates

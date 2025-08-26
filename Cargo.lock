@@ -751,7 +751,7 @@ dependencies = [
 
 [[package]]
 name = "zeitfetch"
-version = "0.1.15"
+version = "0.1.16"
 dependencies = [
  "home",
  "lazy_static",

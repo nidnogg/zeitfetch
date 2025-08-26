@@ -1,6 +1,6 @@
 [package]
 name = "zeitfetch"
-version = "0.1.15"
+version = "0.1.16"
 edition = "2021"
 authors = ["Henrique V (nidnogg)"]
 description = "Instantaneous snapshots of cross-platform system information"
@@ -34,7 +34,7 @@ unicode-width = "0.2.0"
 
 
 [target.'cfg(windows)'.dependencies]
-winapi = { version = "0.3.9", features = ["processenv"] }
+winapi = { version = "0.3.9", features = ["processenv", "consoleapi"] }
 
 [dev-dependencies]
 rstest = "0.26.0"
